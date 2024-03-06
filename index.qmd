@@ -2,7 +2,7 @@
 
 # Forward {.unnumbered}
 
-It has been over three years since I last wrote the forward to a Black Rock City population report. It is hard to understate my excitement for the community to see the results. Not only is the release of the annual report this year a celebration of all the hard work of the many absolutely amazing volunteers of the Black Rock City Census, but this report also represents a celebration of the return home for our community to the Black Rock Desert. This year also marks an important milestone for the Black Rock City Census -- data using our improved data collection methods spanning a decade (although no data were collected in 2020 and 2021). The world has changed since Burning Man 2019, and burners have changed with it. The subsequent document details in what ways we have changed and in what ways we persevered as community and remained the same.
+Some text here
 
 ## Contributions and acknowledgments {.unnumbered}
 
@@ -14,7 +14,7 @@ It has been over three years since I last wrote the forward to a Black Rock City
 
 **Special thanks and acknowledgements:**
 
--   The nearly 200 volunteers of the 2022 Census Lab including: research collaborators, volunteer coordinators, camp builders, gate samplers, key punchers, Census Lab hosts, graphic designers, and many more!
+-   The nearly 200 volunteers of the 2023 Census Lab including: research collaborators, volunteer coordinators, camp builders, gate samplers, key punchers, Census Lab hosts, graphic designers, and many more!
 
 -   Special thanks to Dana "DV8" DeVaul whose work on the 2018 population report was the basis for many elements in this report, and to Dominic "Hunter" Beaulieu-Prévost for cleaning and weighting data from 2013 to 2019.
 
