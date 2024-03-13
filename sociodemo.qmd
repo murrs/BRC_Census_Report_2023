@@ -25,12 +25,12 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #Color palette (ordinal): c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50", "#F9F871")
 ```
 
-
 # Demographics and social characteristics {#sociodemo}
 
 ## Burning Man attendence
 
 ### Proportion of virgins
+
 ```{r, echo = FALSE}
 # virgin <- makePlotData(varName = "Virgin", varNameTable,
 #                           designs = list(design13, design14, design15, 
@@ -73,43 +73,66 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
-
 ### Number of burns attended
 
 ```{r, echo = FALSE, warning = FALSE}
-# ggplot(census22, aes(x = numberBurns, y = after_stat(density), weight = weights)) + 
-#   geom_histogram(fill = "#EA008B", color = "black") +
-#   theme_bw() +
-#   labs(x = "Number of burns attended (including 2022)", y = "Density")
-# 
-# medianBurns <- c(svyquantile(~numberBurns, design22, 0.5)[[1]][1],
-#                  svyquantile(~nbburns, design19, 0.5)[[1]][1],
-#                  svyquantile(~nbburns, design18, 0.5)[[1]][1],
-#                  svyquantile(~nbburns, design17, 0.5)[[1]][1],
-#                  svyquantile(~nbburns, design16, 0.5)[[1]][1],
-#                  svyquantile(~nbburns, design15, 0.5)[[1]][1],
-#                  svyquantile(~nbburns, design14, 0.5)[[1]][1],
-#                  1) |>
-#   rev() |>
-#   matrix(nrow = 1)
-# row.names(medianBurns) <- "Median Prior Burns Attended"
-# medianBurns |>
-#   kbl(col.names = c(2013:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:9, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+ggplot(census23, 
+       aes(x = nburns, y = after_stat(density), weight = weights)) +
+  geom_histogram(fill = "#EA008B", color = "black", binwidth = 1) +
+  theme_bw() +
+  labs(x = "Number of burns attended (including 2023)", y = "Proportion") +
+  coord_cartesian(xlim = c(0, 30))
+
+
+empCDFs <- list(svycdf(~nburns, design23)[[1]],
+                 svycdf(~numberBurns, design22)[[1]],
+                 svycdf(~nbburns, design19)[[1]],
+                 svycdf(~nbburns, design18)[[1]],
+                 svycdf(~nbburns, design17)[[1]],
+                 svycdf(~nbburns, design16)[[1]],
+                 svycdf(~nbburns, design15)[[1]],
+                 svycdf(~nbburns, design14)[[1]])
+names(empCDFs) <- c(2023:2022, 2019:2014)
+## todo: use nbburns2-6 to add 2013 data
+
+myQuantiles <- c(0, 1, 2, 4, 10, Inf) # account for time looping burners!
+rangeNames <- c("1","2","3-4","5-10",">10")
+
+## number burns >=2022 are inclusive, but <= 2019 are not inclusive
+cumulProportions1 <- sapply(
+  empCDFs[c("2023", "2022")], 
+  mapply, 
+  myQuantiles)
+cumulProportions2 <- sapply(
+  empCDFs[c("2019", "2018", "2017", "2016", "2015", "2014")], 
+  mapply, 
+  myQuantiles-1) # -1 to make these inclusive
+cumulProportions <- cbind(cumulProportions1, cumulProportions2)
+
+myProportions <- diff(cumulProportions)
+rownames(myProportions) <- rangeNames
+
+myDat <- data.frame(
+  rows=factor(rownames(myProportions)[row(myProportions)],
+              levels=rev(rangeNames)), 
+  Year=factor(colnames(myProportions)[col(myProportions)],
+              levels=2014:2023),
+  Percentage=c(myProportions))
+
+ggplot(myDat, aes(x = Year, y = Percentage, fill = rows)) + 
+  geom_bar(position = "fill",stat = "identity") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_x_discrete(drop = FALSE) + 
+  labs(fill="Number\n of burns\n attended\n (inclusive)") +
+  scale_fill_manual(values=c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50")[c(3, 4, 2, 5, 1)])
 ```
 
 <!-- Other ideas?  Average number of burns attended without a break? -->
 
-
-
 ## Demographics
 
 ### Age
+
 ```{r, echo = FALSE, warning = FALSE}
 # ggplot(census22, aes(x = age, y = after_stat(density), weight = weights)) + 
 #   geom_histogram(fill = "#EA008B", color = "black") +
@@ -136,8 +159,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### Current gender
+
 ```{r, echo = FALSE, warning = FALSE}
 # gender22.male <- svyciprop(~grepl("(?<!([Ff]e))[Mm]ale", currentGender, perl = TRUE),
 #                            design22)
@@ -205,8 +228,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 
 ```
 
-
 ### Sex assigned at birth
+
 ```{r}
 # sexAtBirth <- makePlotData(varName = "What sex was assigned to you at birth?",
 #                            varNameTable,
@@ -232,8 +255,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### Gender identity
+
 ```{r}
 # genderID <- makePlotData(varName = "What is your current gender?", varNameTable,
 #                             designs = list(design22),
@@ -271,9 +294,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 <!--  Do you consider yourself to be any of the following (transperson etc.) -->
-
 
 ### Chosen pronouns
 
@@ -302,6 +323,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ```
 
 ### Personal income in 2021
+
 ```{r}
 # pi.lt25.22 <- customPlotDat(c("No income", "Less than $7500", 
 #                                  "$7,500-$14,999", "$15,000-$24,999"),
@@ -476,8 +498,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### Household income in 2021
+
 ```{r}
 # hi.lt25.22 <- customPlotDat(c("No income", "Less than $7500", 
 #                                  "$7,500-$14,999", "$15,000-$24,999"),
@@ -710,6 +732,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ```
 
 ### Residence outside of Black Rock City
+
 ```{r}
 # reside <- makePlotData("Where do you usually reside (when not in Black Rock City)?",
 #                        varNameTable = varNameTable,
@@ -763,11 +786,14 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 
 ## Voting and politics
 
-### Number of times voted in last four Federal US elections 
+### Number of times voted in last four Federal US elections
 
 <!-- Combine with voting eligiblity -->
+
 <!-- Need to revisit this one when I have more time.  Probably separate -->
+
 <!-- voter eligibility breakdowns and a lasagna plot for number of votes -->
+
 <!-- would be better. -->
 
 ```{r}
@@ -826,6 +852,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ```
 
 ### Political party affiliation
+
 ```{r}
 # politicalParty <- makePlotData("With which political party are you currently affiliated in the United States, if any?",
 #                                varNameTable = varNameTable,
@@ -950,6 +977,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ```
 
 ### Political views
+
 ```{r}
 # politicalViews <- makePlotData("Generally, in terms of political views, rather than political parties, I consider myself to be primarily",
 #                                varNameTable = varNameTable,
@@ -999,10 +1027,10 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ## Ethinicity and language
 
 ### Ethnoracial background
+
 ```{r}
 # ethnoracial22 <- makePlotData("Which category best describes your ethnoracial background?",
 #                               varNameTable = varNameTable,
@@ -1097,6 +1125,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ```
 
 ### Self-identification as a person of color
+
 ```{r}
 # personOfColor <- makePlotData("Do you consider yourself to be a person of color?",
 #                               varNameTable = varNameTable,
@@ -1124,8 +1153,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### First language learned
+
 ```{r}
 
 # language <- makePlotData("What was the first language you learned and still use (i.e., native language)?",
@@ -1193,9 +1222,11 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   kable_styling() |>
 #   scroll_box(width = "100%")
 ```
+
 ## Spirituality
 
 ### How do you describe your spirituality?
+
 ```{r}
 # spirituality <- makePlotData("How do you describe your spirituality?",
 #                              varNameTable = varNameTable,
@@ -1234,13 +1265,16 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### Religion or religious denomination
 
 <!-- Comments from 2022: -->
+
 <!-- Something needs to be done to address the multiple religions selection, not sure what -->
+
 <!-- I think we have to add counts from the moreReligion questions to the -->
+
 <!-- religion question and treat it as a select multiple. For now I'm just -->
+
 <!-- going to do only the main religion question in the interest of time -->
 
 ```{r}
@@ -1325,6 +1359,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ### Identify with a disability status
 
 <!-- Maybe separate into binary yes/no and categories if yes? -->
+
 ```{r}
 # disability <- makePlotData("What disability statuses (if any) do you identify with?",
 #                            varNameTable = varNameTable,
@@ -1361,6 +1396,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ## Sexuality
 
 ### Sexual orientation
+
 ```{r}
 # sexualOrientation <- makePlotData("Which of these expressions best describes your sexual orientation?",
 #              varNameTable = varNameTable,
@@ -1412,6 +1448,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ```
 
 ### Sexuality labels
+
 ```{r}
 # sexuality <- makePlotData("Some people use specific labels to describe their sexuality. Do you consider that one or more of these labels describe your sexuality?",
 #                            varNameTable = varNameTable,
@@ -1462,10 +1499,10 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ## Relationships
 
 ### Romantic Orientation
+
 ```{r}
 # romanticOrientation <- makePlotData("Which of these expressions best describes your romantic orientation?",
 #                                     varNameTable = varNameTable,
@@ -1494,8 +1531,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### Partner in the default world
+
 ```{r}
 # partner <- makePlotData("In the default world, do you have a partner or partners?",
 #                         varNameTable = varNameTable,
@@ -1533,8 +1570,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   scroll_box(width = "100%")
 ```
 
-
 ### Relationship labels
+
 ```{r}
 # relationship <- makePlotData("Some people use specific labels to describe their relationship style. Do you consider that one or more of these labels describe your relationships?",
 #                            varNameTable = varNameTable,
@@ -1572,5 +1609,3 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 #   kable_styling() |>
 #   scroll_box(width = "100%")
 ```
-
-
