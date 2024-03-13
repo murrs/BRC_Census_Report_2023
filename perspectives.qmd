@@ -21,30 +21,30 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 ### Do you identify as a Burner?
 
 ```{r}
-# burnerID <- makePlotData("Do you identify as a Burner?",
-#                          varNameTable = varNameTable,
-#                          designs = list(design16, design17, design18, design19,
-#                                         design22),
-#                          years = c(2016:2019, 2022),
-#                          levels = c(rep(list(c("No", "Sort_of", "Yes")), times = 4), 
-#                                     list(c("No", "Sort of", "Yes"))),
-#                          labels = c("No", "Sort of", "Yes"))
-# 
-# ggplot(burnerID, aes(x = year, y = est, fill = labels)) +
-#   geom_area(alpha = 0.65) +
-#   scale_y_continuous(labels = percent) +
-#   scale_x_continuous(breaks = c(2016:2019, 2022), labels = c(2016:2019, 2022)) +
-#   scale_fill_manual(values = c("#EA008B", "#FF416f", "#FF7457")[3:1]) +
-#   labs(x = "", y = "Burning Man participants (%)", fill = "Do you identify as a Burner?") +
-#   theme_bw()
-# 
-# makeTableData(burnerID) |>
-#   kbl(col.names = c(2016:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:6, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+burnerID <- makePlotData("Do you identify as a Burner?",
+                         varNameTable = varNameTable,
+                         designs = list(design16, design17, design18, design19,
+                                        design22, design23),
+                         years = c(2016:2019, 2022:2023),
+                         levels = c(rep(list(c("No", "Sort_of", "Yes")), times = 4),
+                                    rep(list(c("No", "Sort of", "Yes")), times = 2)),
+                         labels = c("No", "Sort of", "Yes"))
+
+ggplot(burnerID, aes(x = year, y = est, fill = labels)) +
+  geom_area(alpha = 0.65) +
+  scale_y_continuous(labels = percent) +
+  scale_x_continuous(breaks = c(2016:2019, 2022:2023), labels = c(2016:2019, 2022:2023)) +
+  scale_fill_manual(values = c("#EA008B", "#FF416f", "#FF7457")[3:1]) +
+  labs(x = "", y = "Burning Man participants (%)", fill = "Do you identify as a Burner?") +
+  theme_bw()
+
+makeTableData(burnerID) |>
+  kbl(col.names = c(2016:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:6, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ### Which of the 10 Principles do you practice most frequently in your everyday life?
