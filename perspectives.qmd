@@ -1,3 +1,10 @@
+```{r, echo=FALSE}
+knitr::opts_chunk$set(fig.pos = "H", out.extra = "", echo = FALSE,
+                      warning = FALSE, message = FALSE)
+```
+
+# Perspectives on Burning Man
+
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # Preparation
 
@@ -12,9 +19,12 @@ source(paste0(getwd(), "/_RCode/read_census_data.R"))
 source(paste0(getwd(), "/_RCode/make_table_data.R"))
 source(paste0(getwd(), "/_RCode/make_plot_data.R"))
 source(paste0(getwd(), "/_RCode/additional_functions.R"))
+
+gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
+discreteColors <- c("#EA008B", "#FFCF50", "#B0AEDC", "#AADA91", "#554149", "#A07200", "#FF7457")
 ```
 
-# Perspectives on Burning Man
+
 
 ## Burner Identity and the 10 Principles
 
@@ -34,8 +44,8 @@ ggplot(burnerID, aes(x = year, y = est, fill = labels)) +
   geom_area(alpha = 0.65) +
   scale_y_continuous(labels = percent) +
   scale_x_continuous(breaks = c(2016:2019, 2022:2023), labels = c(2016:2019, 2022:2023)) +
-  scale_fill_manual(values = c("#EA008B", "#FF416f", "#FF7457")[3:1]) +
-  labs(x = "", y = "Burning Man participants (%)", fill = "Do you identify as a Burner?") +
+  scale_fill_manual(values = gradientColors(3)[3:1]) +
+  labs(x = "", y = "Burning Man participants (%)", fill = "Do you identify \n as a Burner?") +
   theme_bw()
 
 makeTableData(burnerID) |>
@@ -43,7 +53,7 @@ makeTableData(burnerID) |>
       row.names = TRUE) |>
   kable_paper("striped", full_width = F) |>
   kable_styling() |>
-  column_spec(column = 1:6, width_min = "10.5em") |>
+  column_spec(column = 1:7, width_min = "10.5em") |>
   scroll_box(width = "100%")
 ```
 

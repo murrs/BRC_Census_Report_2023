@@ -3,6 +3,8 @@ knitr::opts_chunk$set(fig.pos = "H", out.extra = "", echo = FALSE,
                       warning = FALSE, message = FALSE)
 ```
 
+# Demographics and social characteristics {#sociodemo}
+
 ```{r}
 # Preparation
 
@@ -20,12 +22,10 @@ source(paste0(getwd(), "/_RCode/make_table_data.R"))
 source(paste0(getwd(), "/_RCode/make_plot_data.R"))
 source(paste0(getwd(), "/_RCode/additional_functions.R"))
 
-#Color palette (discrete): c("#EA008B", "#BDA5AD", "#FF7457", "#A07200", "#FFCF50", "#554149", "#F9F871")
+gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
+discreteColors <- c("#EA008B", "#FFCF50", "#B0AEDC", "#AADA91", "#554149", "#A07200", "#FF7457")
 
-#Color palette (ordinal): c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50", "#F9F871")
 ```
-
-# Demographics and social characteristics {#sociodemo}
 
 ## Burning Man attendence
 
@@ -123,8 +123,12 @@ ggplot(myDat, aes(x = Year, y = Percentage, fill = rows)) +
   geom_bar(position = "fill",stat = "identity") +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_x_discrete(drop = FALSE) + 
-  labs(fill="Number\n of burns\n attended\n (inclusive)") +
-  scale_fill_manual(values=c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50")[c(3, 4, 2, 5, 1)])
+  labs(fill="Number\n of burns\n attended\n (inclusive)",
+       x = "") +
+  scale_fill_manual(values = gradientColors(5)) +
+  # scale_fill_manual(values=c("#EA008B", "#d460c7", "#bc8ce0", "#b0aedc",
+  #                               "#c3c4c6")[1:5]) +
+  theme_bw()
 ```
 
 <!-- Other ideas?  Average number of burns attended without a break? -->

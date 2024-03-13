@@ -1,3 +1,8 @@
+```{r, echo=FALSE}
+knitr::opts_chunk$set(fig.pos = "H", out.extra = "", echo = FALSE,
+                      warning = FALSE, message = FALSE)
+```
+
 ```{r}
 library(data.table)
 library(survey)
@@ -9,6 +14,9 @@ source(paste0(getwd(), "/_RCode/read_census_data.R"))
 source(paste0(getwd(), "/_RCode/make_table_data.R"))
 source(paste0(getwd(), "/_RCode/make_plot_data.R"))
 source(paste0(getwd(), "/_RCode/additional_functions.R"))
+
+gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
+discreteColors <- c("#EA008B", "#FFCF50", "#B0AEDC", "#AADA91", "#554149", "#A07200", "#FF7457")
 ```
 
 # Camp logistics
