@@ -23,7 +23,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 design16$variables$bxbforother <- census16$bxbforother
 
 gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
-discreteColors <- c("#EA008B", "#B0AEDC", "#AADA91", "#554149", "#A07200", "#FF7457", "#FFCF50")
+discreteColors <- c("#EA008B", "#B0AEDC", "#554149", "#A07200", "#AADA91", "#FF7457", "#FFCF50")
 ```
 
 
@@ -732,372 +732,297 @@ mpg.tab |>
 ### How many total miles did you drive to get to Black Rock City?
 
 ```{r}
-# med15 <- svyquantile(~milestotal, design15, 0.5, na.rm = TRUE)[[1]]
-# med16 <- svyquantile(~milestotal, design16, 0.5, na.rm = TRUE)[[1]]
-# med17 <- svyquantile(~as.numeric(milestotal), design17, 0.5, na.rm = TRUE)[[1]]
-# med18 <- svyquantile(~milestotal, design18, 0.5, na.rm = TRUE)[[1]]
-# med19 <- svyquantile(~milestotal, design19, 0.5, na.rm = TRUE)[[1]]
-# med22 <- svyquantile(~vehicleMiles, design22, 0.5, na.rm = TRUE)[[1]]
-# miles.median <- rbind(med15, med16, med17, med18, med19, med22)
-# miles.median <- apply(miles.median, 1, function(x){
-#   paste0(x[1], " (", x[2], ", ", x[3], ")")})
-# 
-# q2515 <- svyquantile(~milestotal, design15, 0.25, na.rm = TRUE)[[1]]
-# q2516 <- svyquantile(~milestotal, design16, 0.25, na.rm = TRUE)[[1]]
-# q2517 <- svyquantile(~as.numeric(milestotal), design17, 0.25, na.rm = TRUE)[[1]]
-# q2518 <- svyquantile(~milestotal, design18, 0.25, na.rm = TRUE)[[1]]
-# q2519 <- svyquantile(~milestotal, design19, 0.25, na.rm = TRUE)[[1]]
-# q2522 <- svyquantile(~vehicleMiles, design22, 0.25, na.rm = TRUE)[[1]]
-# miles.q25 <- rbind(q2515, q2516, q2517, q2518, q2519, q2522)
-# miles.q25 <- apply(miles.q25, 1, function(x){
-#   paste0(x[1], " (", x[2], ", ", x[3], ")")})
-# 
-# q7515 <- svyquantile(~milestotal, design15, 0.75, na.rm = TRUE)[[1]]
-# q7516 <- svyquantile(~milestotal, design16, 0.75, na.rm = TRUE)[[1]]
-# q7517 <- svyquantile(~as.numeric(milestotal), design17, 0.75, na.rm = TRUE)[[1]]
-# q7518 <- svyquantile(~milestotal, design18, 0.75, na.rm = TRUE)[[1]]
-# q7519 <- svyquantile(~milestotal, design19, 0.75, na.rm = TRUE)[[1]]
-# q7522 <- svyquantile(~vehicleMiles, design22, 0.75, na.rm = TRUE)[[1]]
-# miles.q75 <- rbind(q7515, q7516, q7517, q7518, q7519, q7522)
-# miles.q75 <- apply(miles.q75, 1, function(x){
-#   paste0(x[1], " (", x[2], ", ", x[3], ")")})
-# 
-# q9915 <- svyquantile(~milestotal, design15, 0.99, na.rm = TRUE)[[1]]
-# q9916 <- svyquantile(~milestotal, design16, 0.99, na.rm = TRUE)[[1]]
-# q9917 <- svyquantile(~as.numeric(milestotal), design17, 0.99, na.rm = TRUE)[[1]]
-# q9918 <- svyquantile(~milestotal, design18, 0.99, na.rm = TRUE)[[1]]
-# q9919 <- svyquantile(~milestotal, design19, 0.99, na.rm = TRUE)[[1]]
-# q9922 <- svyquantile(~vehicleMiles, design22, 0.99, na.rm = TRUE)[[1]]
-# 
-# 
-# design15$variables$miles2 <- ifelse(design15$variables$milestotal < q9915[1],
-#                                     design15$variables$milestotal, NA)
-# design16$variables$miles2 <- ifelse(design16$variables$milestotal < q9916[1],
-#                                     design16$variables$milestotal, NA)
-# design17$variables$miles2 <- ifelse(as.numeric(design17$variables$milestotal) < q9917[1],
-#                                     as.numeric(design17$variables$milestotal), NA)
-# design18$variables$miles2 <- ifelse(design18$variables$milestotal < q9918[1],
-#                                     design18$variables$milestotal, NA)
-# design19$variables$miles2 <- ifelse(design19$variables$milestotal < q9919[1],
-#                                     design19$variables$milestotal, NA)
-# design22$variables$miles2 <- ifelse(design22$variables$vehicleMiles < q9922[1],
-#                                     design22$variables$vehicleMiles, NA)
-# mean15 <- svymean(~miles2, design15, na.rm = TRUE)
-# mean16 <- svymean(~miles2, design16, na.rm = TRUE)
-# mean17 <- svymean(~miles2, design17, na.rm = TRUE)
-# mean18 <- svymean(~miles2, design18, na.rm = TRUE)
-# mean19 <- svymean(~miles2, design19, na.rm = TRUE)
-# mean22 <- svymean(~miles2, design22, na.rm = TRUE)
-# 
-# milesMeans <- c(paste0(sprintf(fdf, round(as.numeric(mean15), 1)), " (", 
-#                        sprintf(fdf, round(as.numeric(mean15) - 1.965 * sqrt(attr(mean15, "var")), 1)), ", ", 
-#                        sprintf(fdf, round(as.numeric(mean15) + 1.965 * sqrt(attr(mean15, "var")), 1)), ")"),
-#                 paste0(sprintf(fdf, round(as.numeric(mean16), 1)), " (", 
-#                        sprintf(fdf, round(as.numeric(mean16) - 1.965 * sqrt(attr(mean16, "var")), 1)), ", ", 
-#                        sprintf(fdf, round(as.numeric(mean16) + 1.965 * sqrt(attr(mean16, "var")), 1)), ")"),
-#                 paste0(sprintf(fdf, round(as.numeric(mean17), 1)), " (", 
-#                        sprintf(fdf, round(as.numeric(mean17) - 1.965 * sqrt(attr(mean17, "var")), 1)), ", ", 
-#                        sprintf(fdf, round(as.numeric(mean17) + 1.965 * sqrt(attr(mean17, "var")), 1)), ")"),
-#                 paste0(sprintf(fdf, round(as.numeric(mean18), 1)), " (", 
-#                        sprintf(fdf, round(as.numeric(mean18) - 1.965 * sqrt(attr(mean18, "var")), 1)), ", ", 
-#                        sprintf(fdf, round(as.numeric(mean18) + 1.965 * sqrt(attr(mean18, "var")), 1)), ")"),
-#                 paste0(sprintf(fdf, round(as.numeric(mean19), 1)), " (", 
-#                        sprintf(fdf, round(as.numeric(mean19) - 1.965 * sqrt(attr(mean19, "var")), 1)), ", ", 
-#                        sprintf(fdf, round(as.numeric(mean19) + 1.965 * sqrt(attr(mean19, "var")), 1)), ")"),
-#                 paste0(sprintf(fdf, round(as.numeric(mean22), 1)), " (", 
-#                        sprintf(fdf, round(as.numeric(mean22) - 1.965 * sqrt(attr(mean22, "var")), 1)), ", ", 
-#                        sprintf(fdf, round(as.numeric(mean22) + 1.965 * sqrt(attr(mean22, "var")), 1)), ")"))
-# 
-# ggplot(design22$variables, aes(x = miles2, weight = weights)) +
-#   geom_density(fill = "#EA008B", alpha = 0.5, bw = 300, linewidth = 1.01) +
-#   geom_segment(x = mean22[1], 
-#                xend = mean22[1],
-#                y = 0, yend = 0.0005, color = "#4C4C4C",
-#                linewidth = 1.1) +
-#   scale_y_continuous(labels = number) +
-#   scale_x_continuous(labels = comma) +
-#   annotate("text", x = 2850, y = 0.0005, label = "Average miles driven (1190.4 miles)") +
-#   theme_bw(13) +
-#   labs(x = "Miles driven to Black Rock City in 2022", y = "Density")
-# 
-# milesTable <- as.table(rbind(milesMeans, miles.q25, miles.median, miles.q75))
-# rownames(milesTable) <- c("Mean (Miles)", "25^th^ percentile",
-#                           "Median", "75^th^ percentil")
-# milesTable |>
-#   kbl(col.names = c(2015:2019, 2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   column_spec(column = 1:2, width_min = "10.5em") |>
-#   kable_styling() |>
-#   scroll_box(width = "100%")
+med15 <- svyquantile(~milestotal, design15, 0.5, na.rm = TRUE)[[1]]
+med16 <- svyquantile(~milestotal, design16, 0.5, na.rm = TRUE)[[1]]
+med17 <- svyquantile(~as.numeric(milestotal), design17, 0.5, na.rm = TRUE)[[1]]
+med18 <- svyquantile(~milestotal, design18, 0.5, na.rm = TRUE)[[1]]
+med19 <- svyquantile(~milestotal, design19, 0.5, na.rm = TRUE)[[1]]
+med22 <- svyquantile(~vehicleMiles, design22, 0.5, na.rm = TRUE)[[1]]
+med23 <- svyquantile(~vehicleMiles, design23, 0.5, na.rm = TRUE)[[1]]
+miles.median <- rbind(med15, med16, med17, med18, med19, med22, med23)
+miles.median <- apply(miles.median, 1, function(x){
+  paste0(x[1], " (", x[2], ", ", x[3], ")")})
+
+q2515 <- svyquantile(~milestotal, design15, 0.25, na.rm = TRUE)[[1]]
+q2516 <- svyquantile(~milestotal, design16, 0.25, na.rm = TRUE)[[1]]
+q2517 <- svyquantile(~as.numeric(milestotal), design17, 0.25, na.rm = TRUE)[[1]]
+q2518 <- svyquantile(~milestotal, design18, 0.25, na.rm = TRUE)[[1]]
+q2519 <- svyquantile(~milestotal, design19, 0.25, na.rm = TRUE)[[1]]
+q2522 <- svyquantile(~vehicleMiles, design22, 0.25, na.rm = TRUE)[[1]]
+q2523 <- svyquantile(~vehicleMiles, design23, 0.25, na.rm = TRUE)[[1]]
+miles.q25 <- rbind(q2515, q2516, q2517, q2518, q2519, q2522, q2523)
+miles.q25 <- apply(miles.q25, 1, function(x){
+  paste0(x[1], " (", x[2], ", ", x[3], ")")})
+
+q7515 <- svyquantile(~milestotal, design15, 0.75, na.rm = TRUE)[[1]]
+q7516 <- svyquantile(~milestotal, design16, 0.75, na.rm = TRUE)[[1]]
+q7517 <- svyquantile(~as.numeric(milestotal), design17, 0.75, na.rm = TRUE)[[1]]
+q7518 <- svyquantile(~milestotal, design18, 0.75, na.rm = TRUE)[[1]]
+q7519 <- svyquantile(~milestotal, design19, 0.75, na.rm = TRUE)[[1]]
+q7522 <- svyquantile(~vehicleMiles, design22, 0.75, na.rm = TRUE)[[1]]
+q7523 <- svyquantile(~vehicleMiles, design23, 0.75, na.rm = TRUE)[[1]]
+miles.q75 <- rbind(q7515, q7516, q7517, q7518, q7519, q7522, q7523)
+miles.q75 <- apply(miles.q75, 1, function(x){
+  paste0(x[1], " (", x[2], ", ", x[3], ")")})
+
+q9915 <- svyquantile(~milestotal, design15, 0.99, na.rm = TRUE)[[1]]
+q9916 <- svyquantile(~milestotal, design16, 0.99, na.rm = TRUE)[[1]]
+q9917 <- svyquantile(~as.numeric(milestotal), design17, 0.99, na.rm = TRUE)[[1]]
+q9918 <- svyquantile(~milestotal, design18, 0.99, na.rm = TRUE)[[1]]
+q9919 <- svyquantile(~milestotal, design19, 0.99, na.rm = TRUE)[[1]]
+q9922 <- svyquantile(~vehicleMiles, design22, 0.99, na.rm = TRUE)[[1]]
+q9923 <- svyquantile(~vehicleMiles, design23, 0.99, na.rm = TRUE)[[1]]
+
+
+design15$variables$miles2 <- ifelse(design15$variables$milestotal < q9915[1],
+                                    design15$variables$milestotal, NA)
+design16$variables$miles2 <- ifelse(design16$variables$milestotal < q9916[1],
+                                    design16$variables$milestotal, NA)
+design17$variables$miles2 <- ifelse(as.numeric(design17$variables$milestotal) < q9917[1],
+                                    as.numeric(design17$variables$milestotal), NA)
+design18$variables$miles2 <- ifelse(design18$variables$milestotal < q9918[1],
+                                    design18$variables$milestotal, NA)
+design19$variables$miles2 <- ifelse(design19$variables$milestotal < q9919[1],
+                                    design19$variables$milestotal, NA)
+design22$variables$miles2 <- ifelse(design22$variables$vehicleMiles < q9922[1],
+                                    design22$variables$vehicleMiles, NA)
+design23$variables$miles2 <- ifelse(design23$variables$vehicleMiles < q9923[1],
+                                    design23$variables$vehicleMiles, NA)
+mean15 <- svymean(~miles2, design15, na.rm = TRUE)
+mean16 <- svymean(~miles2, design16, na.rm = TRUE)
+mean17 <- svymean(~miles2, design17, na.rm = TRUE)
+mean18 <- svymean(~miles2, design18, na.rm = TRUE)
+mean19 <- svymean(~miles2, design19, na.rm = TRUE)
+mean22 <- svymean(~miles2, design22, na.rm = TRUE)
+mean23 <- svymean(~miles2, design23, na.rm = TRUE)
+
+milesMeans <- c(paste0(sprintf(fdf, round(as.numeric(mean15), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean15) - 1.965 * sqrt(attr(mean15, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean15) + 1.965 * sqrt(attr(mean15, "var")), 1)), ")"),
+                paste0(sprintf(fdf, round(as.numeric(mean16), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean16) - 1.965 * sqrt(attr(mean16, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean16) + 1.965 * sqrt(attr(mean16, "var")), 1)), ")"),
+                paste0(sprintf(fdf, round(as.numeric(mean17), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean17) - 1.965 * sqrt(attr(mean17, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean17) + 1.965 * sqrt(attr(mean17, "var")), 1)), ")"),
+                paste0(sprintf(fdf, round(as.numeric(mean18), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean18) - 1.965 * sqrt(attr(mean18, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean18) + 1.965 * sqrt(attr(mean18, "var")), 1)), ")"),
+                paste0(sprintf(fdf, round(as.numeric(mean19), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean19) - 1.965 * sqrt(attr(mean19, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean19) + 1.965 * sqrt(attr(mean19, "var")), 1)), ")"),
+                paste0(sprintf(fdf, round(as.numeric(mean22), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean22) - 1.965 * sqrt(attr(mean22, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean22) + 1.965 * sqrt(attr(mean22, "var")), 1)), ")"),
+                paste0(sprintf(fdf, round(as.numeric(mean23), 1)), " (",
+                       sprintf(fdf, round(as.numeric(mean23) - 1.965 * sqrt(attr(mean23, "var")), 1)), ", ",
+                       sprintf(fdf, round(as.numeric(mean23) + 1.965 * sqrt(attr(mean23, "var")), 1)), ")"))
+
+ggplot(design23$variables, aes(x = miles2, weight = weights)) +
+  geom_density(fill = "#EA008B", alpha = 0.5, bw = 300, linewidth = 1.01) +
+  geom_segment(x = mean23[1],
+               xend = mean23[1],
+               y = 0, yend = 0.0005, color = "#4C4C4C",
+               linewidth = 1.1) +
+  scale_y_continuous(labels = number) +
+  scale_x_continuous(labels = comma) +
+  annotate("text", x = 2850, y = 0.0005, label = "Average miles driven (1190.4 miles)") +
+  theme_bw(13) +
+  labs(x = "Miles driven to Black Rock City in 2023", y = "Density",
+       title = "How many total miles did you drive to get to Black Rock City?")
+
+milesTable <- as.table(rbind(milesMeans, miles.q25, miles.median, miles.q75))
+rownames(milesTable) <- c("Mean (Miles)", "25^th^ percentile",
+                          "Median", "75^th^ percentil")
+milesTable |>
+  kbl(col.names = c(2015:2019, 2022:2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  column_spec(column = 1:8, width_min = "10.5em") |>
+  kable_styling() |>
+  scroll_box(width = "100%")
 ```
 
 ### Route through Nevada to Black Rock City
 
 ```{r}
-# route <- makePlotData("From the list below, select the option that best describes the route through Nevada that you took to get to BRC.",
-#                       designs = list(design19, design22),
-#                       varNameTable = varNameTable,
-#                       years = c(2019, 2022),
-#                       levels = c(list(c("Another_route", "From_AZ_border",
-#                                         "From_CA_via_US6_US95", 
-#                                         "From_LA_to_BRC_via_US395",
-#                                         "From_LA_to_Reno_to_BRC_via_US395",
-#                                         "From_Las_Vegas",
-#                                         "From_North_via_route447",
-#                                         "From_Reno",
-#                                         "From_SF_to_Reno_to_BRC_via_I80",
-#                                         "From_South_CA_via_I15",
-#                                         "From_Utah_border", "IDK")),
-#                                  list(c("Different route", 
-#                                         "From the Arizona border via US-93/US-95",
-#                                         "From Central or Southern California via US-6/US-95",
-#                                         "From Los Angeles / San Diego DIRECT to BRC via US-395",
-#                                         "From Los Angeles / San Diego to RENO to BRC via US-395",
-#                                         "From Las Vegas, NV",
-#                                         "From Washington/Oregon/Northern California on Route 447",
-#                                         "From Reno, NV",
-#                                         "From San Francisco/Sacramento to RENO to BRC via I-80",
-#                                         "From Southern California to Las Vegas to BRC via I-15",
-#                                         "From the Utah border via I-80",
-#                                         "Don't know"))),
-#                       labels = c("Different route", 
-#                                  "From the Arizona border \n via US-93/US-95",
-#                                  "From Central or \n Southern California \n via US-6/US-95",
-#                                  "From Los Angeles \n or San Diego DIRECT \n to BRC via US-395",
-#                                  "From Los Angeles or \n San Diego to RENO \n to BRC via US-395",
-#                                  "From Las Vegas, NV",
-#                                  "From Washington, Oregon, \n Northern California \n on Route 447",
-#                                  "From Reno, NV",
-#                                  "From San Francisco or \n Sacrament to RENO \n to BRC via I-80",
-#                                  "From Southern California \n to Las Vegas \n to BRC via I-15",
-#                                  "From the Utah border \n via I-80",
-#                                  "I don\'t know"),
-#                       labelOrder = c(12, 10, 3, 2, 1, 6, 5, 4, 11, 7, 8, 9))
-# 
-# ggplot(route, aes(x = labels, y = est, fill = as.factor(year))) +
-#   geom_bar(stat = "identity", position = "dodge") +
-#   scale_y_continuous(labels = percent) +
-#   scale_fill_manual(values = c("#EA008B", "#BDA5AD")[2:1]) +
-#   labs(x = "Route to Black Rock City", y = "Burning Man participants who entered through the main gate (%)", fill = "") +
-#   theme_bw() +
-#   coord_flip()
-# 
-# makeTableData(route)[12:1,] |>
-#   kbl(col.names = c(2019, 2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   column_spec(column = 1:3, width_min = "10.5em") |>
-#   kable_styling() |>
-#   scroll_box(width = "100%")
+route <- makePlotData("From the list below, select the option that best describes the route through Nevada that you took to get to BRC.",
+                      designs = list(design19, design22, design23),
+                      varNameTable = varNameTable,
+                      years = c(2019, 2022:2023),
+                      levels = c(list(c("Another_route", "From_AZ_border",
+                                        "From_CA_via_US6_US95",
+                                        "From_LA_to_BRC_via_US395",
+                                        "From_LA_to_Reno_to_BRC_via_US395",
+                                        "From_Las_Vegas",
+                                        "From_North_via_route447",
+                                        "From_Reno",
+                                        "From_SF_to_Reno_to_BRC_via_I80",
+                                        "From_South_CA_via_I15",
+                                        "From_Utah_border", "IDK")),
+                                 rep(list(c("Different route",
+                                        "From the Arizona border via US-93/US-95",
+                                        "From Central or Southern California via US-6/US-95",
+                                        "From Los Angeles / San Diego DIRECT to BRC via US-395",
+                                        "From Los Angeles / San Diego to RENO to BRC via US-395",
+                                        "From Las Vegas, NV",
+                                        "From Washington/Oregon/Northern California on Route 447",
+                                        "From Reno, NV",
+                                        "From San Francisco/Sacramento to RENO to BRC via I-80",
+                                        "From Southern California to Las Vegas to BRC via I-15",
+                                        "From the Utah border via I-80",
+                                        "Don't know")), times = 2)),
+                      labels = c("Different route",
+                                 "From the Arizona border \n via US-93/US-95",
+                                 "From Central or \n Southern California \n via US-6/US-95",
+                                 "From Los Angeles \n or San Diego DIRECT \n to BRC via US-395",
+                                 "From Los Angeles or \n San Diego to RENO \n to BRC via US-395",
+                                 "From Las Vegas, NV",
+                                 "From Washington, Oregon, \n Northern California \n on Route 447",
+                                 "From Reno, NV",
+                                 "From San Francisco or \n Sacrament to RENO \n to BRC via I-80",
+                                 "From Southern California \n to Las Vegas \n to BRC via I-15",
+                                 "From the Utah border \n via I-80",
+                                 "I don\'t know"),
+                      labelOrder = c(12, 10, 3, 2, 1, 6, 5, 4, 11, 7, 8, 9))
+
+ggplot(route, aes(x = labels, y = est, fill = as.factor(year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(labels = percent) +
+  scale_fill_manual(values = discreteColors[1:3]) +
+  labs(x = "Route to Black Rock City", y = "Burning Man participants who entered through the main gate (%)", fill = "",
+       title = "What route did you take through Nevada that you took to get to BRC?") +
+  theme_bw() +
+  coord_flip()
+
+makeTableData(route)[12:1,] |>
+  kbl(col.names = c(2019, 2022:2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  column_spec(column = 1:4, width_min = "10.5em") |>
+  kable_styling() |>
+  scroll_box(width = "100%")
 ```
 
 ## Burner Express Bus (BXB)
 
 ### Which route(s) did you take on the Burner Express Bus?
 
-<!-- I think there was an issue with this question last year -->
-<!-- The code below here for this question does not work -->
-
 ```{r}
-# 
-# bxbroute <- makePlotData("Which route(s) did you take on the Burner Express Bus?",
-# 
-#                           varNameTable = varNameTable,
-# 
-#                           designs = list(design14, design15, design16,
-# 
-#                                          design17, design18, design19,
-# 
-#                                          design22),
-# 
-#                           years = c(2014:2019, 2022),
-# 
-#                           levels = c(rep(list("yes"), times = 6),
-# 
-#                                      list(TRUE)),
-# 
-#                           labels = c("From San Francisco to Black Rock City",
-# 
-#                                      "From Reno to Black Rock City",
-# 
-#                                      "From Black Rock City to San Francisco",
-# 
-#                                      "From Black Rock City to Reno"))
-# 
-# bxbroute <- data.frame(total = c(sum(census14$weightbmorg[census14$bxb_sftobrc == "yes" &
-# 
-#                                                             !is.na(census14$bxb_sftobrc)]),
-# 
-#                                  sum(census14$weightbmorg[census14$bxb_renotobrc == "yes" &
-# 
-#                                                             !is.na(census14$bxb_renotobrc)]),
-# 
-#                                  sum(census14$weightbmorg[census14$bxb_brctosf == "yes" &
-# 
-#                                                             !is.na(census14$bxb_brctosf)]),
-# 
-#                                  sum(census14$weightbmorg[census14$bxb_brctoreno == "yes" &
-# 
-#                                                             !is.na(census14$bxb_brctoreno)]),
-# 
-#                                  sum(census15$weightbmorg1[census15$bxb_sftobrc == "yes" &
-# 
-#                                                              !is.na(census15$bxb_sftobrc)]),
-# 
-#                                  sum(census15$weightbmorg1[census15$bxb_renotobrc == "yes" &
-# 
-#                                                              !is.na(census15$bxb_renotobrc)]),
-# 
-#                                  sum(census15$weightbmorg1[census15$bxb_brctosf == "yes" &
-# 
-#                                                              !is.na(census15$bxb_brctosf)]),
-# 
-#                                  sum(census15$weightbmorg1[census15$bxb_brctoreno == "yes" &
-# 
-#                                                              !is.na(census15$bxb_brctoreno)]),
-# 
-#                                  sum(census16$weightbmorg1[census16$bxb_sftobrc == "yes" &
-# 
-#                                                              !is.na(census16$bxb_sftobrc)]),
-# 
-#                                  sum(census16$weightbmorg1[census16$bxb_renotobrc == "yes" &
-# 
-#                                                              !is.na(census16$bxb_renotobrc)]),
-# 
-#                                  sum(census16$weightbmorg1[census16$bxb_brctosf == "yes" &
-# 
-#                                                              !is.na(census16$bxb_brctosf)]),
-# 
-#                                  sum(census16$weightbmorg1[census16$bxb_brctoreno == "yes" &
-# 
-#                                                              !is.na(census16$bxb_brctoreno)]),
-# 
-#                                  sum(census17$weightbfarrival[census17$bxb_sftobrc == "yes" &
-# 
-#                                                                 !is.na(census17$bxb_sftobrc)]),
-# 
-#                                  sum(census17$weightbfarrival[census17$bxb_renotobrc == "yes" &
-# 
-#                                                                 !is.na(census17$bxb_renotobrc)]),
-# 
-#                                  sum(census17$weightbfarrival[census17$bxb_brctosf == "yes" &
-# 
-#                                                                 !is.na(census17$bxb_brctosf)]),
-# 
-#                                  sum(census17$weightbfarrival[census17$bxb_brctoreno == "yes" &
-# 
-#                                                                 !is.na(census17$bxb_brctoreno)]),
-# 
-#                                  sum(census18$weightbfarrival[census18$bxb_sftobrc == "yes" &
-# 
-#                                                                 !is.na(census18$bxb_sftobrc)]),
-# 
-#                                  sum(census18$weightbfarrival[census18$bxb_renotobrc == "yes" &
-# 
-#                                                                 !is.na(census18$bxb_renotobrc)]),
-# 
-#                                  sum(census18$weightbfarrival[census18$bxb_brctosf == "yes" &
-# 
-#                                                                 !is.na(census18$bxb_brctosf)]),
-# 
-#                                  sum(census18$weightbfarrival[census18$bxb_brctoreno == "yes" &
-# 
-#                                                                 !is.na(census18$bxb_brctoreno)]),
-# 
-#                                  sum(census19$weightbfarrival[census19$bxb_sftobrc == "yes" &
-# 
-#                                                                 !is.na(census19$bxb_sftobrc)]),
-# 
-#                                  sum(census19$weightbfarrival[census19$bxb_renotobrc == "yes" &
-# 
-#                                                                 !is.na(census19$bxb_renotobrc)]),
-# 
-#                                  sum(census19$weightbfarrival[census19$bxb_brctosf == "yes" &
-# 
-#                                                                 !is.na(census19$bxb_brctosf)]),
-# 
-#                                  sum(census19$weightbfarrival[census19$bxb_brctoreno == "yes" &
-# 
-#                                                                 !is.na(census19$bxb_brctoreno)]),
-# 
-#                                  sum(census22$weights[census22$BXBRoute.SFToBRC &
-# 
-#                                                         !is.na(census22$BXBRoute.SFToBRC)]),
-# 
-#                                  sum(census22$weights[census22$BXBRoute.RenoToBRC &
-# 
-#                                                         !is.na(census22$BXBRoute.RenoToBRC)]),
-# 
-#                                  sum(census22$weights[census22$BXBRoute.BRCToSF &
-# 
-#                                                         !is.na(census22$BXBRoute.BRCToSF)]),
-# 
-#                                  sum(census22$weights[census22$BXBRoute.BRCToReno &
-# 
-#                                                         !is.na(census22$BXBRoute.BRCToReno)])),
-# 
-#                        year = rep(c(2014:2019, 2022), each = 4),
-# 
-#                        route = rep(c("SF to BRC", "Reno to BRC",
-# 
-#                                      "BRC to SF", "BRC to Reno"), times = 7),
-# 
-#                        routeType = rep(c("To BRC", "Leaving BRC"), times = 7, each = 2),
-# 
-#                        brcpop = rep(c(68000, 70000, 70000, 70000,
-# 
-#                                       70000, 80000, 87000), each = 4))
-# 
-# yearSums <- data.frame(yearTotal = c(sum(bxbroute$total[bxbroute$year == 2014]),
-# 
-#                                      sum(bxbroute$total[bxbroute$year == 2015]),
-# 
-#                                      sum(bxbroute$total[bxbroute$year == 2016]),
-# 
-#                                      sum(bxbroute$total[bxbroute$year == 2017]),
-# 
-#                                      sum(bxbroute$total[bxbroute$year == 2018]),
-# 
-#                                      sum(bxbroute$total[bxbroute$year == 2019]),
-# 
-#                                      sum(bxbroute$total[bxbroute$year == 2022])),
-# 
-#                        year = c(2014:2019, 2022))
-# 
-# bxbroute <- merge(bxbroute, yearSums, all.x = TRUE, all.y = FALSE)
-# 
-# # ggplot(bxbroute, aes(x = year, y = est, color = labels)) +
-# 
-# #   geom_line(linewidth = 1.5, alpha = 0.7) +
-# 
-# #   geom_point(size = 2.25) +
-# 
-# #   theme_bw(13) +
-# 
-# #   theme(panel.grid.minor = element_blank()) +
-# 
-# #   scale_x_continuous(breaks = c(2014:2019, 2022), labels = c(2014:2019, 2022)) +
-# 
-# #   scale_y_continuous(labels = percent) +
-# 
-# #   scale_color_manual(values = c("#EA008B", "#BDA5AD", "#FF7457", "#A07200")) +
-# 
-# #   guides(color = "none") +
-# 
-# #   labs(x = "", y = "", color = "BXB route")
-# 
-# makeTableData(bxbroute) |>
-# 
-#   kbl(col.names = c(2014:2019, 2022),
-# 
-#       row.names = TRUE) |>
-# 
-#   kable_paper("striped", full_width = F) |>
-# 
-#   kable_styling() |>
-# 
-#   column_spec(column = 1:8, width_min = "10.5em") |>
-# 
-#   scroll_box(width = "100%")
+design14$variables$bxb_anyRoute <- (design14$variables$bxb_sftobrc == "yes") |
+  (design14$variables$bxb_renotobrc == "yes") |
+  (design14$variables$bxb_brctosf == "yes") |
+  (design14$variables$bxb_brctoreno == "yes")
+design14$variables$bxb_anyRoute[is.na(design14$variables$bxb_anyRoute)] <- FALSE
+
+design15$variables$bxb_anyRoute <- (design15$variables$bxb_sftobrc == "yes") |
+  (design15$variables$bxb_renotobrc == "yes") |
+  (design15$variables$bxb_brctosf == "yes") |
+  (design15$variables$bxb_brctoreno == "yes")
+design15$variables$bxb_anyRoute[is.na(design15$variables$bxb_anyRoute)] <- FALSE
+
+design16$variables$bxb_anyRoute <- (design16$variables$bxb_sftobrc == "yes") |
+  (design16$variables$bxb_renotobrc == "yes") |
+  (design16$variables$bxb_brctosf == "yes") |
+  (design16$variables$bxb_brctoreno == "yes")
+design16$variables$bxb_anyRoute[is.na(design16$variables$bxb_anyRoute)] <- FALSE
+
+design17$variables$bxb_anyRoute <- (design17$variables$bxb_sftobrc == "yes") |
+  (design17$variables$bxb_renotobrc == "yes") |
+  (design17$variables$bxb_brctosf == "yes") |
+  (design17$variables$bxb_brctoreno == "yes")
+design17$variables$bxb_anyRoute[is.na(design17$variables$bxb_anyRoute)] <- FALSE
+
+design18$variables$bxb_anyRoute <- (design18$variables$bxb_sftobrc == "yes") |
+  (design18$variables$bxb_renotobrc == "yes") |
+  (design18$variables$bxb_brctosf == "yes") |
+  (design18$variables$bxb_brctoreno == "yes")
+design18$variables$bxb_anyRoute[is.na(design18$variables$bxb_anyRoute)] <- FALSE
+
+design19$variables$bxb_anyRoute <- (design19$variables$bxb_sftobrc == "yes") |
+  (design19$variables$bxb_renotobrc == "yes") |
+  (design19$variables$bxb_brctosf == "yes") |
+  (design19$variables$bxb_brctoreno == "yes")
+design19$variables$bxb_anyRoute[is.na(design19$variables$bxb_anyRoute)] <- FALSE
+
+design22$variables$BXBRoute.any <- design22$variables$BXBRoute.SFToBRC |
+  design22$variables$BXBRoute.RenoToBRC |
+  design22$variables$BXBRoute.BRCToSF |
+  design22$variables$BXBRoute.BRCToReno
+
+design23$variables$BXBRoute.any <- design23$variables$BXBRoute.SFToBRC |
+  design23$variables$BXBRoute.RenoToBRC |
+  design23$variables$BXBRoute.BRCToSF |
+  design23$variables$BXBRoute.BRCToReno
+
+bxbDesign14 <- subset(design14, bxb_anyRoute)
+bxbDesign14$variables$bxb_sftobrc[is.na(bxbDesign14$variables$bxb_sftobrc)] <- "no"
+bxbDesign14$variables$bxb_renotobrc[is.na(bxbDesign14$variables$bxb_renotobrc)] <- "no"
+bxbDesign14$variables$bxb_brctosf[is.na(bxbDesign14$variables$bxb_brctosf)] <- "no"
+bxbDesign14$variables$bxb_brctoreno[is.na(bxbDesign14$variables$bxb_brctoreno)] <- "no"
+
+bxbDesign15 <- subset(design15, bxb_anyRoute)
+bxbDesign15$variables$bxb_sftobrc[is.na(bxbDesign15$variables$bxb_sftobrc)] <- "no"
+bxbDesign15$variables$bxb_renotobrc[is.na(bxbDesign15$variables$bxb_renotobrc)] <- "no"
+bxbDesign15$variables$bxb_brctosf[is.na(bxbDesign15$variables$bxb_brctosf)] <- "no"
+bxbDesign15$variables$bxb_brctoreno[is.na(bxbDesign15$variables$bxb_brctoreno)] <- "no"
+
+bxbDesign16 <- subset(design16, bxb_anyRoute)
+bxbDesign16$variables$bxb_sftobrc[is.na(bxbDesign16$variables$bxb_sftobrc)] <- "no"
+bxbDesign16$variables$bxb_renotobrc[is.na(bxbDesign16$variables$bxb_renotobrc)] <- "no"
+bxbDesign16$variables$bxb_brctosf[is.na(bxbDesign16$variables$bxb_brctosf)] <- "no"
+bxbDesign16$variables$bxb_brctoreno[is.na(bxbDesign16$variables$bxb_brctoreno)] <- "no"
+
+bxbDesign17 <- subset(design17, bxb_anyRoute)
+bxbDesign17$variables$bxb_sftobrc[is.na(bxbDesign17$variables$bxb_sftobrc)] <- "no"
+bxbDesign17$variables$bxb_renotobrc[is.na(bxbDesign17$variables$bxb_renotobrc)] <- "no"
+bxbDesign17$variables$bxb_brctosf[is.na(bxbDesign17$variables$bxb_brctosf)] <- "no"
+bxbDesign17$variables$bxb_brctoreno[is.na(bxbDesign17$variables$bxb_brctoreno)] <- "no"
+
+bxbDesign18 <- subset(design18, bxb_anyRoute)
+bxbDesign18$variables$bxb_sftobrc[is.na(bxbDesign18$variables$bxb_sftobrc)] <- "no"
+bxbDesign18$variables$bxb_renotobrc[is.na(bxbDesign18$variables$bxb_renotobrc)] <- "no"
+bxbDesign18$variables$bxb_brctosf[is.na(bxbDesign18$variables$bxb_brctosf)] <- "no"
+bxbDesign18$variables$bxb_brctoreno[is.na(bxbDesign18$variables$bxb_brctoreno)] <- "no"
+
+bxbDesign19 <- subset(design19, bxb_anyRoute)
+bxbDesign19$variables$bxb_sftobrc[is.na(bxbDesign19$variables$bxb_sftobrc)] <- "no"
+bxbDesign19$variables$bxb_renotobrc[is.na(bxbDesign19$variables$bxb_renotobrc)] <- "no"
+bxbDesign19$variables$bxb_brctosf[is.na(bxbDesign19$variables$bxb_brctosf)] <- "no"
+bxbDesign19$variables$bxb_brctoreno[is.na(bxbDesign19$variables$bxb_brctoreno)] <- "no"
+
+bxbDesign22 <- subset(design22, BXBRoute.any)
+bxbDesign23 <- subset(design23, BXBRoute.any)
+
+bxbroute <- makePlotData("Which route(s) did you take on the Burner Express Bus?",
+                          varNameTable = varNameTable,
+                          designs = list(bxbDesign14, bxbDesign15, bxbDesign16,
+                                         bxbDesign17, bxbDesign18, bxbDesign19,
+                                         bxbDesign22, bxbDesign23),
+                          years = c(2014:2019, 2022:2023),
+                          levels = c(rep(list("yes"), times = 6),
+                                     rep(list(TRUE), times = 2)),
+                          labels = c("From San Francisco to Black Rock City",
+                                     "From Reno to Black Rock City",
+                                     "From Black Rock City to San Francisco",
+                                     "From Black Rock City to Reno"))
+ 
+ggplot(bxbroute, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2014:2019, 2022:2023), labels = c(2014:2019, 2022:2023)) +
+  scale_y_continuous(labels = percent) +
+  scale_color_manual(values = discreteColors) +
+  labs(x = "", y = "", color = "BXB route",
+       title = "Which route(s) did you take on the Burner Express Bus?")
+
+makeTableData(bxbroute) |>
+  kbl(col.names = c(2014:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:9, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 
 ```
 
@@ -1107,71 +1032,43 @@ mpg.tab |>
 
 #TODO make foot note for response option change in 2016
 
-# bxbcamp <- makePlotData("Did you camp in Burner Express Camping?",
-# 
-#                         varNameTable = varNameTable,
-# 
-#                         designs = list(design16, design17, design18,
-# 
-#                                        design19, design22),
-# 
-#                         years = c(2016:2019, 2022),
-# 
-#                         levels = c(rep(list(c("idk", "no",
-# 
-#                                               "yes_and_would_again",
-# 
-#                                               "yes_but_would_not_again")), times = 4),
-# 
-#                                    list(c("I don't know",
-# 
-#                                           "No, I did not camp in Burner Express Camping",
-# 
-#                                           "Yes, and I would camp there again",
-# 
-#                                           "Yes, but I would not camp there again"))),
-# 
-#                         labels = c("I don\'t know",
-# 
-#                                           "No, I did not camp in \n Burner Express Camping",
-# 
-#                                           "Yes, and I would \n camp there again",
-# 
-#                                           "Yes, but I would not \n camp there again"),
-# 
-#                         labelOrder = c(3,4,2,1))
-# 
-# ggplot(bxbcamp, aes(x = year, y = est, color = labels)) +
-# 
-#   geom_line(linewidth = 1.5, alpha = 0.7) +
-# 
-#   geom_point(size = 2.25) +
-# 
-#   theme_bw(13) +
-# 
-#   theme(panel.grid.minor = element_blank()) +
-# 
-#   scale_x_continuous(breaks = c(2016:2019, 2022), labels = c(2016:2019, 2022)) +
-# 
-#   scale_y_continuous(labels = percent) +
-# 
-#   scale_color_manual(values = c("#EA008B", "#BDA5AD", "#FF7457", "#A07200")) +
-# 
-#   labs(x = "", y = "BXB Riders (%)", color = "BXB camping")
-# 
-# makeTableData(bxbcamp) |>
-# 
-#   kbl(col.names = c(2016:2019, 2022),
-# 
-#       row.names = TRUE) |>
-# 
-#   kable_paper("striped", full_width = F) |>
-# 
-#   kable_styling() |>
-# 
-#   column_spec(column = 1:6, width_min = "10.5em") |>
-# 
-#   scroll_box(width = "100%")
+bxbcamp <- makePlotData("Did you camp in Burner Express Camping?",
+                        varNameTable = varNameTable,
+                        designs = list(bxbDesign16, bxbDesign17, bxbDesign18,
+                                       bxbDesign19, bxbDesign22, bxbDesign23),
+                        years = c(2016:2019, 2022:2023),
+                        levels = c(rep(list(c("idk", "no",
+                                              "yes_and_would_again",
+                                              "yes_but_would_not_again")), times = 4),
+                                   rep(list(c("I don't know",
+                                          "No, I did not camp in Burner Express Camping",
+                                          "Yes, and I would camp there again",
+                                          "Yes, but I would not camp there again")), times = 2)),
+                        labels = c("I don\'t know",
+                                          "No, I did not camp in \n Burner Express Camping",
+                                          "Yes, and I would \n camp there again",
+                                          "Yes, but I would not \n camp there again"),
+                        labelOrder = c(3,4,2,1))
+
+ggplot(bxbcamp, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2016:2019, 2022:2023), 
+                     labels = c(2016:2019, 2022:2023)) +
+  scale_y_continuous(labels = percent) +
+  scale_color_manual(values = discreteColors) +
+  labs(x = "", y = "BXB Riders (%)", color = "BXB camping",
+       title = "Did you camp in Burner Express Camping?")
+
+makeTableData(bxbcamp) |>
+  kbl(col.names = c(2016:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:7, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 
 ```
 
@@ -1179,55 +1076,35 @@ mpg.tab |>
 
 ```{r}
 
-# bxbshuttle <- makePlotData("Did you ride the satellite shuttle that operates within Black Rock City?",
-# 
-#                         varNameTable = varNameTable,
-# 
-#                         designs = list(design16, design17, design18,
-# 
-#                                        design19, design22),
-# 
-#                         years = c(2016:2019, 2022),
-# 
-#                         levels = c(rep(list(c("idk", "no", "yes")), times = 4),
-# 
-#                                    list(c("Don't know", "No", "Yes"))),
-# 
-#                         labels = c("I don\'t know", "No", "Yes"),
-# 
-#                         labelOrder = c(3,2,1))
-# 
-# ggplot(bxbshuttle, aes(x = year, y = est, color = labels)) +
-# 
-#   geom_line(linewidth = 1.5, alpha = 0.7) +
-# 
-#   geom_point(size = 2.25) +
-# 
-#   theme_bw(13) +
-# 
-#   theme(panel.grid.minor = element_blank()) +
-# 
-#   scale_x_continuous(breaks = c(2016:2019, 2022), labels = c(2016:2019, 2022)) +
-# 
-#   scale_y_continuous(labels = percent) +
-# 
-#   scale_color_manual(values = c("#EA008B", "#BDA5AD", "#FF7457")) +
-# 
-#   labs(x = "", y = "BXB Riders", color = "Took the BXB \n satellite shuttle")
-# 
-# makeTableData(bxbshuttle) |>
-# 
-#   kbl(col.names = c(2016:2019, 2022),
-# 
-#       row.names = TRUE) |>
-# 
-#   kable_paper("striped", full_width = F) |>
-# 
-#   kable_styling() |>
-# 
-#   column_spec(column = 1:6, width_min = "10.5em") |>
-# 
-#   scroll_box(width = "100%")
+bxbshuttle <- makePlotData("Did you ride the satellite shuttle that operates within Black Rock City?",
+                        varNameTable = varNameTable,
+                        designs = list(bxbDesign16, bxbDesign17, bxbDesign18,
+                                       bxbDesign19, bxbDesign22, bxbDesign23),
+                        years = c(2016:2019, 2022:2023),
+                        levels = c(rep(list(c("idk", "no", "yes")), times = 4),
+                                   rep(list(c("Don't know", "No", "Yes")), times = 2)),
+                        labels = c("I don\'t know", "No", "Yes"),
+                        labelOrder = c(3,2,1))
+
+ggplot(bxbshuttle, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2016:2019, 2022:2023), 
+                     labels = c(2016:2019, 2022:2023)) +
+  scale_y_continuous(labels = percent) +
+  scale_color_manual(values = discreteColors) +
+  labs(x = "", y = "BXB Riders", color = "Took the BXB \n satellite shuttle",
+       title = "Did you ride the satellite shuttle that \n operates within Black Rock City?")
+
+makeTableData(bxbshuttle) |>
+  kbl(col.names = c(2016:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:7, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 
 ```
 
@@ -1235,70 +1112,40 @@ mpg.tab |>
 
 ```{r}
 
-# bxbreason <- makePlotData("What were your main reasons for choosing to take a Burner Express Bus?",
-# 
-#                           varNameTable = varNameTable,
-# 
-#                           designs = list(design14, design15, design16,
-# 
-#                                          design17, design18, design19,
-# 
-#                                          design22),
-# 
-#                           years = c(2014:2019, 2022),
-# 
-#                           levels = c(rep(list("yes"), times = 6),
-# 
-#                                      list(TRUE)),
-# 
-#                           labels = c("Cost",
-# 
-#                                      "Do not have to drive",
-# 
-#                                      "Avoid gate traffic",
-# 
-#                                      "Help reduce road congestion",
-# 
-#                                      "I\'ve used Burner Express in the past \n and wanted to do it again",
-# 
-#                                      "Other"),
-# 
-#                           labelOrder = c(1,2,3,4,5,6))
-# 
-# ggplot(bxbreason, aes(x = year, y = est, color = labels)) +
-# 
-#   geom_line(linewidth = 1.5, alpha = 0.7) +
-# 
-#   geom_point(size = 2.25) +
-# 
-#   theme_bw(13) +
-# 
-#   theme(panel.grid.minor = element_blank()) +
-# 
-#   scale_x_continuous(breaks = c(2014:2019, 2022), labels = c(2014:2019, 2022)) +
-# 
-#   scale_y_continuous(labels = percent) +
-# 
-#   scale_color_manual(values = c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50", "#F9F871")) +
-# 
-#   guides(color = "none") +
-# 
-#   labs(x = "", y = "", color = "Reason to take BXB")
-# 
-# makeTableData(bxbreason) |>
-# 
-#   kbl(col.names = c(2014:2019, 2022),
-# 
-#       row.names = TRUE) |>
-# 
-#   kable_paper("striped", full_width = F) |>
-# 
-#   kable_styling() |>
-# 
-#   column_spec(column = 1:8, width_min = "10.5em") |>
-# 
-#   scroll_box(width = "100%")
+bxbreason <- makePlotData("What were your main reasons for choosing to take a Burner Express Bus?",
+                          varNameTable = varNameTable,
+                          designs = list(bxbDesign16,
+                                         bxbDesign17, bxbDesign18, bxbDesign19,
+                                         bxbDesign22, bxbDesign23),
+                          years = c(2016:2019, 2022:2023),
+                          levels = c(rep(list("yes"), times = 4),
+                                     rep(list(TRUE), times = 2)),
+                          labels = c("Cost",
+                                     "Do not have to drive",
+                                     "Avoid gate traffic",
+                                     "Help reduce road congestion",
+                                     "I\'ve used Burner Express in the past \n and wanted to do it again",
+                                     "Other"),
+                          labelOrder = c(1,2,3,4,5,6))
 
+ggplot(bxbreason, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2016:2019, 2022:2023), labels = c(2016:2019, 2022:2023)) +
+  scale_y_continuous(labels = percent) +
+  scale_color_manual(values = discreteColors) +
+  labs(x = "", y = "", color = "Reason to take BXB",
+       title = "What were your main reasons for choosing to take a Burner Express Bus?")
+
+makeTableData(bxbreason) |>
+  kbl(col.names = c(2016:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:7, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ### Value of Burner Express Bus ticket based on satisfaction

@@ -1027,9 +1027,9 @@ unitKM <- ((kmRegex > 0) & (miRegex == -1)) |
 
 #Pull first number given in text
 raw[, vehicleMiles := gsub(",", "", vehicleMiles)]
-raw$vehiclMiles[!is.na(raw$vehicleMiles)] <- as.numeric(regmatches(raw$vehicleMiles, regexpr("^([0-9]+)", raw$vehicleMiles)))
+raw$vehicleMiles[!is.na(raw$vehicleMiles)] <- as.numeric(regmatches(raw$vehicleMiles, regexpr("^([0-9]+)", raw$vehicleMiles)))
 # raw[, vehicleMiles := as.numeric(regmatches(vehicleMiles, regexpr("^([0-9]+)", vehicleMiles)))]
-raw$vehiclMiles[raw$vehiclMiles >= 100000] <- NA
+raw$vehicleMiles[raw$vehiclMiles >= 100000] <- NA
 
 #vehicle miles unit
 vehicleMiles.unitSwitch <- function(x){
