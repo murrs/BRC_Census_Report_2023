@@ -2,6 +2,15 @@ library(data.table)
 library(survey)
 library(anesrake)
 
+#Conversation with random, sonder, and carly
+# Awesome, so Total Population = BxB + 1.05(BxA) + Gate
+# "1392 total passengers flew in with BxA. There were also approximately 
+#    300 general aviation pilots and passengers that came in via 88NV. Those 
+#    numbers are less precise, as we don't specifically capture the count for 
+#    passengers that come in via GA, but it's roughly an average of 0.5 per 
+#    pilot."
+# Cool, so airport should be a total of 1392 BxA + 300 pilots + 150 passengers = 1842
+
 #Read in random samplle data, create age categorical variable
 randomSample2023 <- fread("allRandomSamples2023.tsv", sep = "\t")
 randomSample2023[, age := 2023 - `What is the year of your birth (1)`]
@@ -10,7 +19,7 @@ randomSample2023[, ageCat5 := ifelse(between(age, 0, 29), "0-29",
                                             ifelse(between(age, 40, 49), "40-49",
                                                    ifelse(between(age, 50, 59), "50-59",
                                                           ifelse(age >= 60, "60+", NA)))))]
-randomSample2022 <- fread("C:\\Users\\ashev\\Documents\\census\\report_2022\\allRandomSamples2022.tsv", sep = "\t")
+# randomSample2022 <- fread("C:\\Users\\ashev\\Documents\\census\\report_2022\\allRandomSamples2022.tsv", sep = "\t")
 #Read in cleaned online survey data
 online2023 <- fread("cleaned2023.tsv", sep = "\t")
 online2023 <- do.call(data.table, lapply(online2023, function(x){
