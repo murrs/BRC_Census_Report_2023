@@ -21,7 +21,7 @@ source(paste0(getwd(), "/_RCode/make_plot_data.R"))
 source(paste0(getwd(), "/_RCode/additional_functions.R"))
 
 gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
-discreteColors <- c("#EA008B", "#FFCF50", "#B0AEDC", "#AADA91", "#554149", "#A07200", "#FF7457")
+discreteColors <- c("#EA008B", "#B0AEDC", "#554149", "#A07200", "#AADA91", "#FF7457", "#FFCF50")
 ```
 
 
@@ -57,199 +57,189 @@ makeTableData(burnerID) |>
   scroll_box(width = "100%")
 ```
 
-### Which of the 10 Principles do you practice most frequently in your everyday life?
+### Practicing the 10 Principles in everyday life?
 
-```{r, echo = FALSE}
-# prinFreq <- makePlotData(varName = "Which of the 10 Principles do you find most difficult to practice in your everyday life?",
-#                         varNameTable = varNameTable,
-#                         designs = list(design16, design17, design18, 
-#                                        design19, design22),
-#                         years = c(2016:2019, 2022), 
-#                         levels = list("yes", "yes", "yes", "yes", TRUE),
-#                         labels = c("Radical Inclusion", "Gifting",
-#                                    "Decommodification", "Radical Self-reliance",
-#                                    "Radical Self-expression", "Communal Effort", 
-#                                    "Civic Resposibility","Leave No Trace", 
-#                                    "Participation", "Immediacy"),
-#                         labelOrder = c(4,9,7,6,1,8,2,5,10,3))
-# 
-# ggplot(prinFreq[prinFreq$year == 2022,], aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "10 Principles", y = "Burning Man participants in 2022 (%)") +
-#   theme_bw() +
-#   coord_flip()
-# 
-# makeTableData(prinFreq)[10:1,] |>
-#   kbl(col.names = c(2016:2019, 2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   column_spec(column = 1:6, width_min = "10.5em") |>
-#   kable_styling() |>
-#   scroll_box(width = "100%")
+```{r}
+prinFreq <- makePlotData(varName = "Which of the 10 Principles do you practice most frequently in your everyday life?",
+                        varNameTable = varNameTable,
+                        designs = list(design16, design17, design18,
+                                       design19, design22, design23),
+                        years = c(2016:2019, 2022:2023),
+                        levels = list("yes", "yes", "yes", "yes", TRUE, TRUE),
+                        labels = c("Radical Inclusion", "Gifting",
+                                   "Decommodification", "Radical Self-reliance",
+                                   "Radical Self-expression", "Communal Effort",
+                                   "Civic Resposibility","Leave No Trace",
+                                   "Participation", "Immediacy"),
+                        labelOrder = c(3,9,5,6,7,2,10,1,8,4))
+
+ggplot(prinFreq[prinFreq$year == 2023,], aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "10 Principles", y = "Burning Man participants in 2023 (%)",
+       title = "Which of the 10 Principles do you practice most frequently \n in your everyday life?") +
+  theme_bw() +
+  coord_flip()
+
+makeTableData(prinFreq)[10:1,] |>
+  kbl(col.names = c(2016:2019, 2022:2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  column_spec(column = 1:7, width_min = "10.5em") |>
+  kable_styling() |>
+  scroll_box(width = "100%")
 ```
 
-### Which of the 10 Principles are the most difficult to practice in every day life?
-
 ```{r, echo = FALSE}
-# prinDif <- makePlotData(varName = "Which of the 10 Principles do you find most difficult to practice in your everyday life?",
-#                         varNameTable = varNameTable,
-#                         designs = list(design16, design17, design18, 
-#                                        design19, design22),
-#                         years = c(2016:2019, 2022), 
-#                         levels = list("yes", "yes", "yes", "yes", TRUE),
-#                         labels = c("Radical Inclusion", "Gifting",
-#                                    "Decommodification", "Radical Self-reliance",
-#                                    "Radical Self-expression", "Communal Effort", 
-#                                    "Civic Resposibility","Leave No Trace", 
-#                                    "Participation", "Immediacy"),
-#                         labelOrder = rev(c(3, 10, 5, 2, 8, 1, 6, 7, 9, 4)))
-# 
-# ggplot(prinDif[prinDif$year == 2022,], aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "10 Principles", y = "Burning Man participants in 2022 (%)") +
-#   theme_bw() +
-#   coord_flip()
-# 
-# makeTableData(prinDif)[10:1,] |>
-#   kbl(col.names = c(2016:2019, 2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   column_spec(column = 1:6, width_min = "10.5em") |>
-#   kable_styling() |>
-#   scroll_box(width = "100%")
+prinDif <- makePlotData(varName = "Which of the 10 Principles do you find most difficult to practice in your everyday life?",
+                        varNameTable = varNameTable,
+                        designs = list(design16, design17, design18,
+                                       design19, design22, design23),
+                        years = c(2016:2019, 2022:2023),
+                        levels = list("yes", "yes", "yes", "yes", TRUE),
+                        labels = c("Radical Inclusion", "Gifting",
+                                   "Decommodification", "Radical Self-reliance",
+                                   "Radical Self-expression", "Communal Effort",
+                                   "Civic Resposibility","Leave No Trace",
+                                   "Participation", "Immediacy"),
+                        labelOrder = c(4,9,7,6,1,8,2,5,10,3))
+
+ggplot(prinDif[prinDif$year == 2023,], aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "10 Principles", y = "Burning Man participants in 2023 (%)",
+       title = "Which of the 10 Principles do you find most difficult \n to practice in your everyday life?") +
+  theme_bw() +
+  coord_flip()
+
+makeTableData(prinDif)[10:1,] |>
+  kbl(col.names = c(2016:2019, 2022:2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  column_spec(column = 1:7, width_min = "10.5em") |>
+  kable_styling() |>
+  scroll_box(width = "100%")
 ```
+
 
 ### Importance of the 10 Principles
 
 ```{r}
-# importance10p <- makePlotData("How important are the 10 Principles to you?",
-#                              varNameTable = varNameTable,
-#                              designs = list(design15, design16, design17, design18, design19, design22),
-#                              years = c(2015:2019, 2022),
-#                              levels = c(rep(list(c("Important", 
-#                                                    "Moderately_imp",
-#                                                    "Not_imp",
-#                                                    "Slightly_imp",
-#                                                    "Very_imp")), times = 5), 
-#                                         list(c("Important", 
-#                                                "Moderately important",
-#                                                "Not important",
-#                                                "Slightly important",
-#                                                "Very important"))),
-#                              labels = c("Important", 
-#                                         "Moderately important",
-#                                         "Not important",
-#                                         "Slightly important",
-#                                         "Very important"),
-#                              labelOrder = c(3, 4, 2, 1, 5))
-# 
-# ggplot(importance10p, aes(x = year, y = est, fill = labels)) +
-#   geom_bar(stat = "identity", position = "dodge") +
-#   scale_y_continuous(labels = percent) +
-#   scale_x_continuous(breaks = c(2016:2019, 2022)) +
-#   labs(x = "", y = "Burning Man participants (%)", fill = "Importance") +
-#   theme_bw() +
-#   scale_fill_manual(values = c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50"))
-# 
-# makeTableData(importance10p) |>
-#   kbl(col.names = c(2015:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:7, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+importance10p <- makePlotData("How important are the 10 Principles to you?",
+                             varNameTable = varNameTable,
+                             designs = list(design15, design16, design17, 
+                                            design18, design19, design22,
+                                            design23),
+                             years = c(2015:2019, 2022:2023),
+                             levels = c(rep(list(c("Important",
+                                                   "Moderately_imp",
+                                                   "Not_imp",
+                                                   "Slightly_imp",
+                                                   "Very_imp")), times = 5),
+                                        rep(list(c("Important",
+                                               "Moderately important",
+                                               "Not important",
+                                               "Slightly important",
+                                               "Very important")), times = 2)),
+                             labels = c("Important",
+                                        "Moderately important",
+                                        "Not important",
+                                        "Slightly important",
+                                        "Very important"),
+                             labelOrder = c(3, 4, 2, 1, 5))
+
+ggplot(importance10p, aes(x = year, y = est, fill = labels)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(labels = percent) +
+  scale_x_continuous(breaks = c(2015:2019, 2022:2023)) +
+  labs(x = "", y = "Burning Man participants (%)", fill = "Importance",
+       title = "How important are the 10 Principles to you?") +
+  theme_bw() +
+  scale_fill_manual(values = gradientColors(5)[5:1])
+
+makeTableData(importance10p) |>
+  kbl(col.names = c(2015:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:8, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ### 10 Principles essential to creating an authentic Burning Man experience
 
 ```{r}
-# essential10p <- makePlotData("How essential are the 10 Principles to creating an authentic Burning Man experience?",
-#                              varNameTable = varNameTable,
-#                              designs = list(design15, design16, design17, design18, design19, design22),
-#                              years = c(2015:2019, 2022),
-#                              levels = c(rep(list(c("Important", 
-#                                                    "Moderately_imp",
-#                                                    "Not_imp",
-#                                                    "Slightly_imp",
-#                                                    "Very_imp")), times = 5), 
-#                                         list(c("Important", 
-#                                                "Moderately important",
-#                                                "Not important",
-#                                                "Slightly important",
-#                                                "Very important"))),
-#                              labels = c("Essential", 
-#                                         "Moderately essential",
-#                                         "Not essential",
-#                                         "Slightly essential",
-#                                         "Very essential"),
-#                              labelOrder = c(3, 4, 2, 1, 5))
-# 
-# ggplot(essential10p, aes(x = year, y = est, fill = labels)) +
-#   geom_bar(stat = "identity", position = "dodge") +
-#   scale_y_continuous(labels = percent) +
-#   scale_x_continuous(breaks = c(2016:2019, 2022)) +
-#   labs(x = "", y = "Burning Man participants (%)", fill = "Essentiality") +
-#   theme_bw() +
-#   scale_fill_manual(values = c("#EA008B", "#FF416f", "#FF7457", "#FFA349", "#FFCF50"))
-# 
-# makeTableData(essential10p) |>
-#   kbl(col.names = c(2015:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:7, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+essential10p <- makePlotData("How essential are the 10 Principles to creating an authentic Burning Man experience?",
+                             varNameTable = varNameTable,
+                             designs = list(design15, design16, design17, 
+                                            design18, design19, design22,
+                                            design23),
+                             years = c(2015:2019, 2022:2023),
+                             levels = c(rep(list(c("Important",
+                                                   "Moderately_imp",
+                                                   "Not_imp",
+                                                   "Slightly_imp",
+                                                   "Very_imp")), times = 5),
+                                        rep(list(c("Important",
+                                               "Moderately important",
+                                               "Not important",
+                                               "Slightly important",
+                                               "Very important")), times = 2)),
+                             labels = c("Essential",
+                                        "Moderately essential",
+                                        "Not essential",
+                                        "Slightly essential",
+                                        "Very essential"),
+                             labelOrder = c(3, 4, 2, 1, 5))
+
+ggplot(essential10p, aes(x = year, y = est, fill = labels)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(labels = percent) +
+  scale_x_continuous(breaks = c(2016:2019, 2022:2023)) +
+  labs(x = "", y = "Burning Man participants (%)", fill = "Essentiality",
+       title = "How essential are the 10 Principles to creating \n an authentic Burning Man experience?") +
+  theme_bw() +
+  scale_fill_manual(values = gradientColors(5)[5:1])
+
+makeTableData(essential10p) |>
+  kbl(col.names = c(2015:2019, 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:8, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
-### Incorporation of the 10 Principles in the workplace
+### Incorporation of the 10 Principles in daily life
 
 ```{r}
-# workplace10p.1 <- makePlotData("Are you incorporating any of the 10 Principles in your workplace?",
-#                              varNameTable = varNameTable,
-#                              designs = list(design16, design17, design18, 
-#                                             design19),
-#                              years = c(2016:2019),
-#                              levels = rep(list(c("I_have_modeled_my_activities_on_them",
-#                                                "I_try_to_practice_them",
-#                                                "No")), times = 4),
-#                              labels = c("I have modeled my \n professional activities \n on them",
-#                                         "I try to practice them \n at my worplace",
-#                                         "No, I am not"),
-#                              labelOrder = c(1, 2, 3))
-# 
-# workplace10p.2 <- makePlotData("Are you incorporating any of the 10 Principles in your workplace?",
-#                                varNameTable = varNameTable,
-#                                designs = list(design22),
-#                                years = c(2022),
-#                                levels = c("Modeled professional activity",
-#                                                  "No, I am not",
-#                                                  "Not applicable",
-#                                                  "Practice at my workplace"),
-#                                labels = c("I have modeled my \n professional activities \n on them",
-#                                           "No, I am not",
-#                                           "Not applicable",
-#                                           "I try to practice them \n at my workplace"),
-#                                labelOrder = c(1, 4, 2, 3))
-# 
-# ggplot(workplace10p.2, aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "Incorporation of 10 Principles in your workplace", y = "Burning Man participants in 2022 (%)") +
-#   theme_bw()
-# 
-# workplace10p.1$labels <- factor(workplace10p.1$labels, 
-#                                 levels = c("I have modeled my \n professional activities \n on them",
-#                                            "I try to practice them \n at my workplace",
-#                                            "No, I am not",
-#                                            "Not applicable"))
-# workplace10p <- rbind(workplace10p.1, workplace10p.2)
-# makeTableData(workplace10p) |>
-#   kbl(col.names = c(2016:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:6, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+prinDaily <- makePlotData("Are you incorporating any of the 10 Principles in your daily life?",
+                             varNameTable = varNameTable,
+                             designs = list(design23),
+                             years = c(2023),
+                             levels = list(c("No, I am not",
+                                               "Not applicable",
+                                               "Yes, I have modeled my business or professional activity on these\nprinciples",
+                                               "Yes, I try to practice these principles in my daily life")),
+                             labels = c("No, I am not",
+                                        "Not applicable",
+                                        "Yes, I have modeled \n my business or \n professional activity \n on them",
+                                        "Yes, I try to practice them \n in my daily life"),
+                             labelOrder = c(2, 1, 3, 4))
+
+ggplot(prinDaily, aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "Incorporation in daily life", y = "Burning Man participants in 2023 (%)",
+       title = "Are you incorporating any of the 10 Principles in your daily life?") +
+  theme_bw() +
+  coord_flip()
+
+makeTableData(prinDaily) |>
+  kbl(col.names = c(2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:2, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ## Children at Burning Man
