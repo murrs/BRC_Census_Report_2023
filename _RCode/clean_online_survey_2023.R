@@ -655,6 +655,7 @@ principles",
          "4" = "Not applicable")
 }
 
+raw[, tenPrinciplesDailyLife := sapply(tenPrinciplesDailyLife, tenPrinciplesDailyLifeSwitch)]
 
 #Volunteering
 raw[, volunteerLastYear.BRC := !is.na(volunteerLastYear.BRC)]
@@ -1164,6 +1165,7 @@ raw[, gerlachStops.brunos := !is.na(gerlachStops.brunos)]
 raw[, gerlachStops.joes := !is.na(gerlachStops.joes)]
 raw[, gerlachStops.roadsideFood := !is.na(gerlachStops.roadsideFood)]
 raw[, gerlachStops.roadsideGoods := !is.na(gerlachStops.roadsideGoods)]
+raw[, gerlachStops.friendsOfBlackRock := !is.na(gerlachStops.friendsOfBlackRock)]
 raw[, gerlachStops.other := !is.na(gerlachStops.other)]
 raw[, gerlachStops.didNotStop := !is.na(gerlachStops.didNotStop)]
 
