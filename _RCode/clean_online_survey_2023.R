@@ -598,6 +598,9 @@ raw[, nonProfitPrograms.flyRanch := ifelse(nonProfitPrograms.flyRanch == 1, "Yes
 raw[, nonProfitPrograms.philosophicalCenter := ifelse(nonProfitPrograms.philosophicalCenter == 1, "Yes",
                                                       ifelse(nonProfitPrograms.philosophicalCenter == 2, "Heard of it",
                                                              ifelse(nonProfitPrograms.philosophicalCenter == 3, "No", NA)))]
+raw[, nonProfitPrograms.HIVE := ifelse(nonProfitPrograms.HIVE == 1, "Yes",
+                                                      ifelse(nonProfitPrograms.HIVE == 2, "Heard of it",
+                                                             ifelse(nonProfitPrograms.HIVE == 3, "No", NA)))]
 
 #Ten principles
 #TODO Identify people who skipped this question

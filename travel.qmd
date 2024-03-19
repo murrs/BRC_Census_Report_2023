@@ -1254,7 +1254,7 @@ makeTableData(bxbticketexp) |>
   kbl(col.names = c(2016:2019, 2022:2023),
       row.names = TRUE) |>
   kable_paper("striped", full_width = F) |>
-  kable_styling() |
+  kable_styling() |>
   column_spec(column = 1:7, width_min = "10.5em") |>
   scroll_box(width = "100%")
 
