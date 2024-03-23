@@ -23,7 +23,8 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 design16$variables$bxbforother <- census16$bxbforother
 
 gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
-discreteColors <- c("#EA008B", "#B0AEDC", "#554149", "#A07200", "#AADA91", "#FF7457", "#FFCF50")
+discreteColors <- c("#EA008B", "#B0AEDC", "#554149", "#A07200", "#AADA91", 
+                    "#FF7457", "#FFCF50", "#6FCFEB", "#FF8189", "#FFFF3B")
 ```
 
 
