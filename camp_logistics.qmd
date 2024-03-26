@@ -17,7 +17,7 @@ source(paste0(getwd(), "/_RCode/additional_functions.R"))
 
 gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
 discreteColors <- c("#EA008B", "#B0AEDC", "#554149", "#A07200", "#AADA91", 
-                    "#FF7457", "#FFCF50", "#6FCFEB", "#FF8189", "#FFFF3B")
+                    "#FF8189", "#FFCF50", "#6FCFEB", "#76236C", "#FFFF3B")
 ```
 
 # Camp logistics
