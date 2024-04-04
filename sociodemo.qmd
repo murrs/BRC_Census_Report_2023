@@ -848,6 +848,90 @@ makeTableData(householdIncome) |>
 #   column_spec(column = 1:9, width_min = "10.5em") |>
 #   kable_styling() |>
 #   scroll_box(width = "100%")
+
+library(cartogram)
+library(sf)
+library(tmap)
+library(tigris)
+library(zipcodeR)
+
+theZipz <- census23$reside.ZIP
+
+theZipz[nchar(theZipz) >5 & !is.na(theZipz)] <- gsub(
+  "-.{4}$",
+  "",
+  theZipz[nchar(theZipz) >5 & !is.na(theZipz)]
+) # remove last 4 of zip codes
+
+Zs <- lapply(theZipz, function(u){
+  if (is.na(u)) {
+    NA
+  } else {
+    reverse_zipcode(u)
+  }
+}
+)
+
+burnerState <- sapply(Zs, function(v){
+  if (length(v)>1) {
+    v$state
+  } else {
+    NA
+  }
+}
+)
+
+statesWeights <- tapply(census23$weights, burnerState, sum)
+statesWeights <- statesWeights/sum(statesWeights)*100
+
+statesPercents <- sort(round(statesWeights,2), decreasing=TRUE) # weighted
+
+burnersByState <- data.frame(STATE = names(statesPercents), Percent = statesPercents)
+
+# adding mississippi
+burnersByState <- rbind(burnersByState, data.frame(STATE="MS",Percent=0))
+
+## plotting
+usa <- states(cb = TRUE, progress_bar = FALSE) %>%
+  shift_geometry()
+
+usa$STATE <- c(state.abb, "DC", "PR")[
+  match(usa$NAME, c(state.name, "District of Columbia", "Puerto Rico"),)
+  ]
+
+usa2 <- merge(usa, burnersByState, by="STATE")
+
+usa2 <- st_transform(usa2, 3395)
+
+# construct cartogram
+usa2_cont <- cartogram_cont(usa2, "Percent", 
+                            itermax = 15,
+                            threshold = 0.01,
+                            verbose=FALSE) %>%
+  st_cast()
+
+# plot it
+tm_shape(usa2_cont) + 
+  tm_polygons("Percent", style = "jenks", 
+              palette=gradientColors(3)) +
+  tm_layout("Frequency of US residence",title.position=c(0.5, 0.9),
+            frame = FALSE, legend.position = c(0.8,0.1),
+            legend.outside=FALSE) + 
+  tm_text("STATE", size = 1/2, remove.overlap = FALSE)
+
+## table of 
+
+names(statesPercents) <- c(state.name, "District of Columbia", "Puerto Rico")[
+  match(names(statesPercents), c(state.abb, "DC", "PR"),)
+]
+
+head(data.frame(statesPercents),12) |>
+  kbl(col.names = c("Percentage"), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:1, width_min = "10.5em") |>
+  scroll_box(width = "100%")
+
 ```
 
 ### California and Nevada County Residence
