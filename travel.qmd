@@ -1382,7 +1382,9 @@ gerlachStops23 <- makePlotData("As you passed through the town of Gerlach, did y
                              labelOrder = c(11, 5, 8, 10, 1, 7, 3, 9, 12, 4, 2, 6, 13, 14)[14:1])
 
 gerlachStops22 <- makePlotData("As you passed through the town of Gerlach, did you stop at/visit any of the following locations?",
-                             varNameTable = varNameTable[-380,], #Removing friends of black rock
+                               #Removing friends of black rock
+                               varNameTable = varNameTable[!grepl("Friends of Black Rock City",
+                                                                  varNameTable$option),], 
                              designs = list(design22),
                              years = 2022,
                              levels = rep(list(TRUE), times = 1),
