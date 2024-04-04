@@ -139,164 +139,202 @@ ggplot(myDat, aes(x = Year, y = Percentage, fill = rows)) +
 ### Age
 
 ```{r, echo = FALSE, warning = FALSE}
-# ggplot(census22, aes(x = age, y = after_stat(density), weight = weights)) + 
-#   geom_histogram(fill = "#EA008B", color = "black") +
-#   theme_bw() +
-#   labs(x = "Age when arriving on playa in 2022", y = "Density")
-# 
-# medianAge <- c(svyquantile(~age, design22, 0.5)[[1]][1],
-#                  svyquantile(~age, design19, 0.5)[[1]][1],
-#                  svyquantile(~age, design18, 0.5)[[1]][1],
-#                  svyquantile(~age, design17, 0.5)[[1]][1],
-#                  svyquantile(~age, design16, 0.5)[[1]][1],
-#                  svyquantile(~age, design15, 0.5)[[1]][1],
-#                  svyquantile(~age, design14, 0.5)[[1]][1],
-#                  32) |>
-#   rev() |>
-#   matrix(nrow = 1)
-# row.names(medianAge) <- "Median Age"
-# medianAge |>
-#   kbl(col.names = c(2013:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:9, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+ggplot(census23, aes(x = age, y = after_stat(density), weight = weights)) +
+  geom_histogram(binwidth = 1, fill = "#EA008B", color = "black") +
+  scale_x_continuous(breaks=seq(20,90,5)) + 
+  theme_bw() +
+  labs(x = "Age at arrival on playa in 2023", y = "Density")
+
+props <- c(10, 25, 50, 75, 90)/100
+
+ageQuantiles <- data.frame(svyquantile(~age, design23, props)[[1]][,1],
+                      svyquantile(~age, design22, props)[[1]][,1],
+                      rep("",length(props)),
+                      svyquantile(~age, design19, props)[[1]][,1],
+                      svyquantile(~age, design18, props)[[1]][,1],
+                      svyquantile(~age, design17, props)[[1]][,1],
+                      svyquantile(~age, design16, props)[[1]][,1],
+                      svyquantile(~age, design15, props)[[1]][,1],
+                      svyquantile(~age, design14, props)[[1]][,1]
+                      ) |>
+rev()
+row.names(ageQuantiles) <- paste0(props*100, "th percentile")
+ageQuantiles |>
+  kbl(col.names = c(2014:2019,"", 2022:2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  #column_spec(column = 1:9, width_min = "10.5em") |>
+  column_spec(column = 1:10, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ### Current gender
 
 ```{r, echo = FALSE, warning = FALSE}
-# gender22.male <- svyciprop(~grepl("(?<!([Ff]e))[Mm]ale", currentGender, perl = TRUE),
-#                            design22)
-# gender22.male <- data.table(est = as.numeric(gender22.male), 
-#                             lower = attr(gender22.male, "ci")[1],
-#                             upper = attr(gender22.male, "ci")[2],
-#                             level = "male",
-#                             year = 2022,
-#                             labels = factor("Male", 
-#                                             levels = c("Male", "Female", 
-#                                                        "Other identity")))
-# gender22.female <- svyciprop(~grepl("[Ff]emale", currentGender, perl = TRUE), 
-#                            design22)
-# gender22.female <- data.table(est = as.numeric(gender22.female), 
-#                             lower = attr(gender22.female, "ci")[1],
-#                             upper = attr(gender22.female, "ci")[2],
-#                             level = "female",
-#                             year = 2022,
-#                             labels = factor("Female", 
-#                                             levels = c("Male", "Female", 
-#                                                        "Other identity")))
-# gender22.other <- svyciprop(~I(!grepl("[Mm]ale", currentGender, perl = TRUE)), 
-#                            design22)
-# gender22.other <- data.table(est = as.numeric(gender22.other), 
-#                             lower = attr(gender22.other, "ci")[1],
-#                             upper = attr(gender22.other, "ci")[2],
-#                             level = "male",
-#                             year = 2022,
-#                             labels = factor("Other identity", 
-#                                             levels = c("Male", "Female", 
-#                                                        "Other identity")))
-# gender22 <- rbind(gender22.male, gender22.female, gender22.other)
-# 
-# gender <- makePlotData(varName = "What is your current gender?", varNameTable,
-#                           designs = list(design13, design14, design15, 
-#                                          design16, design17, design18, 
-#                                          design19),
-#                           years = c(2013:2019), 
-#                           levels = rep(list(c("female", "fluid", "male")), times = 7),
-#                           labels = c("Female", "Other identity", "Male"),
-#                           labelOrder = c("Male", "Female", "Other identity"))
-# gender <- gender[!is.na(gender$est),]
-# gender <- rbind(gender, gender22)
-# 
-# ggplot(gender, aes(x = year, y = est, color = labels)) +
-#   geom_line(linewidth = 1.5, alpha = 0.7) +
-#   geom_point(size = 2.25) +
-#   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
-#   #               linewidth = 1) +
-#   theme_bw(13) +
-#   theme(panel.grid.minor = element_blank()) +
-#   scale_x_continuous(breaks = c(2013:2019, 2022), labels = c(2013:2019, 2022)) +
-#   scale_y_continuous(labels = percent, limits = c(0, NA)) +
-#   scale_color_manual(values = c("#EA008B", "#554149", "#BDA5AD")) +
-#   labs(x = "", y = "Burning Man participants (%)", 
-#        color = "Current gender")
-# 
-# makeTableData(gender) |>
-#   kbl(col.names = c(2013:2019, 2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:9, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+#### 2022
+gender22.male <- svyciprop(~grepl("(?<!([Ff]e))[Mm]ale", currentGender, perl = TRUE),
+                           design22)
+gender22.male <- data.table(est = as.numeric(gender22.male),
+                            lower = attr(gender22.male, "ci")[1],
+                            upper = attr(gender22.male, "ci")[2],
+                            level = "male",
+                            year = 2022,
+                            labels = factor("Male",
+                                            levels = c("Male", "Female",
+                                                       "Other identity")))
+gender22.female <- svyciprop(~grepl("[Ff]emale", currentGender, perl = TRUE),
+                           design22)
+gender22.female <- data.table(est = as.numeric(gender22.female),
+                            lower = attr(gender22.female, "ci")[1],
+                            upper = attr(gender22.female, "ci")[2],
+                            level = "female",
+                            year = 2022,
+                            labels = factor("Female",
+                                            levels = c("Male", "Female",
+                                                       "Other identity")))
+gender22.other <- svyciprop(~I(!grepl("[Mm]ale", currentGender, perl = TRUE)),
+                           design22)
+gender22.other <- data.table(est = as.numeric(gender22.other),
+                            lower = attr(gender22.other, "ci")[1],
+                            upper = attr(gender22.other, "ci")[2],
+                            level = "male",
+                            year = 2022,
+                            labels = factor("Other identity",
+                                            levels = c("Male", "Female",
+                                                       "Other identity")))
+gender22 <- rbind(gender22.male, gender22.female, gender22.other)
+#### 2023
+gender23.male <- svyciprop(~grepl("(?<!([Ff]e))[Mm]ale", currentGender, perl = TRUE),
+                           design23)
+gender23.male <- data.table(est = as.numeric(gender23.male),
+                            lower = attr(gender23.male, "ci")[1],
+                            upper = attr(gender23.male, "ci")[2],
+                            level = "male",
+                            year = 2023,
+                            labels = factor("Male",
+                                            levels = c("Male", "Female",
+                                                       "Other identity")))
+gender23.female <- svyciprop(~grepl("[Ff]emale", currentGender, perl = TRUE),
+                           design23)
+gender23.female <- data.table(est = as.numeric(gender23.female),
+                            lower = attr(gender23.female, "ci")[1],
+                            upper = attr(gender23.female, "ci")[2],
+                            level = "female",
+                            year = 2023,
+                            labels = factor("Female",
+                                            levels = c("Male", "Female",
+                                                       "Other identity")))
+gender23.other <- svyciprop(~I(!grepl("[Mm]ale", currentGender, perl = TRUE)),
+                           design23)
+gender23.other <- data.table(est = as.numeric(gender23.other),
+                            lower = attr(gender23.other, "ci")[1],
+                            upper = attr(gender23.other, "ci")[2],
+                            level = "male",
+                            year = 2023,
+                            labels = factor("Other identity",
+                                            levels = c("Male", "Female",
+                                                       "Other identity")))
+gender23 <- rbind(gender23.male, gender23.female, gender23.other)
+
+gender <- makePlotData(varName = "What is your current gender?", varNameTable,
+                          designs = list(design13, design14, design15,
+                                         design16, design17, design18,
+                                         design19),
+                          years = c(2013:2019),
+                          levels = rep(list(c("female", "fluid", "male")), times = 7),
+                          labels = c("Female", "Other identity", "Male"),
+                          labelOrder = c("Male", "Female", "Other identity"))
+gender <- gender[!is.na(gender$est),]
+gender <- rbind(gender, gender22, gender23)
+
+ggplot(gender, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
+  #               linewidth = 1) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2013:2019, 2022, 2023), labels = c(2013:2019, 2022, 2023)) +
+  scale_y_continuous(labels = percent, limits = c(0, NA)) +
+  scale_color_manual(values = c("#EA008B", "#554149", "#BDA5AD")) +
+  labs(x = "", y = "Burning Man participants (%)",
+       color = "Current gender")
+
+makeTableData(gender) |>
+  kbl(col.names = c(2013:2019, 2022, 2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:9, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 
 ```
 
 ### Sex assigned at birth
 
 ```{r}
-# sexAtBirth <- makePlotData(varName = "What sex was assigned to you at birth?",
-#                            varNameTable,
-#                            designs = list(design22),
-#                            years = c(2022),
-#                            levels = list(c("Female", "Intersex", "Male")),
-#                            labels = c("Female", "Intersex", "Male"),
-#                            labelOrder = rev(c("Male", "Female", "Intersex")))
-# 
-# ggplot(sexAtBirth, aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "Sex at birth", y = "Burning Man participants (%)") +
-#   theme_bw()
-#   # theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# 
-# makeTableData(sexAtBirth)[3:1,] |>
-#   kbl(col.names = c(2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:1, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+sexAtBirth <- makePlotData(varName = "What sex was assigned to you at birth?",
+                           varNameTable,
+                           designs = list(design23),
+                           years = c(2023),
+                           levels = list(c("Female", "Intersex", "Male")),
+                           labels = c("Female", "Intersex", "Male"),
+                           labelOrder = rev(c("Male", "Female", "Intersex")))
+
+ggplot(sexAtBirth, aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "Sex at birth", y = "Burning Man participants (%)") +
+  theme_bw()
+  # theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+makeTableData(sexAtBirth)[3:1,] |>
+  kbl(col.names = c(2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:1, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ### Gender identity
 
 ```{r}
-# genderID <- makePlotData(varName = "What is your current gender?", varNameTable,
-#                             designs = list(design22),
-#                           years = c(2022), 
-#                           levels = list(c("Female", "Male", "Gender queer", 
-#                                           "Cisgender male", "Cisgender female",
-#                                           "Transgender female/Trans female",
-#                                           "Non-binary",
-#                                           "Transgender male/ Trans male",
-#                                           "Prefer to self-describe",
-#                                           "Two-spirit")),
-#                           labels = c("Female", "Male", "Gender queer", 
-#                                      "Cisgender male", "Cisgender female",
-#                                      "Transgender female", "Non-binary", 
-#                                      "Transgender male", "Other", "Two-spirit"),
-#                           labelOrder = c("Male", "Female", "Cisgender male",
-#                                              "Cisgender female", 
-#                                              "Transgender female", "Non-binary",
-#                                              "Gender queer", "Transgender male", 
-#                                              "Other", "Two-spirit"))
-# 
-# ggplot(genderID, aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "Gender identity", y = "Burning Man participants (%)") +
-#   theme_bw() +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# 
-# makeTableData(genderID) |>
-#   kbl(col.names = c(2022),
-#       row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:1, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+genderID <- makePlotData(varName = "What is your current gender?", varNameTable,
+                            designs = list(design23),
+                          years = c(2023),
+                          levels = list(c("Female", "Male", "Gender queer",
+                                          "Cisgender male", "Cisgender female",
+                                          "Transgender female/Trans female",
+                                          "Non-binary",
+                                          "Transgender male/ Trans male",
+                                          "Prefer to self-describe",
+                                          "Two-spirit")),
+                          labels = c("Female", "Male", "Gender queer",
+                                     "Cisgender male", "Cisgender female",
+                                     "Transgender female", "Non-binary",
+                                     "Transgender male", "Other", "Two-spirit"),
+                          labelOrder = c("Male", "Female", "Cisgender male",
+                                             "Cisgender female",
+                                             "Transgender female", "Non-binary",
+                                             "Gender queer", "Transgender male",
+                                             "Other", "Two-spirit"))
+
+ggplot(genderID, aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "Gender identity", y = "Burning Man participants (%)") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+makeTableData(genderID) |>
+  kbl(col.names = c(2023),
+      row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:1, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 <!--  Do you consider yourself to be any of the following (transperson etc.) -->
@@ -304,378 +342,413 @@ ggplot(myDat, aes(x = Year, y = Percentage, fill = rows)) +
 ### Chosen pronouns
 
 ```{r}
-# pronouns <- makePlotData(varName = "What are your pronouns?", varNameTable,
-#                          designs = list(design22),
-#                          years = c(2022), 
-#                          levels = list(c(TRUE)),
-#                          labels = c("She/her", "They/them", "He/him", "Other"),
-#                          labelOrder = c("He/him", "She/her", "They/them", 
-#                                          "Other"))
-# 
-# ggplot(pronouns, aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "Chosen pronouns", y = "Burning Man participants (%)") +
-#   theme_bw()
-#   # theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# 
-# makeTableData(pronouns) |>
-#   kbl(col.names = c(2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:1, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+pronouns <- makePlotData(varName = "What are your pronouns?", varNameTable,
+                         designs = list(design23),
+                         years = c(2023),
+                         levels = list(c(TRUE)),
+                         labels = c("She/her", "They/them", "He/him", "Other"),
+                         labelOrder = c("He/him", "She/her", "They/them",
+                                         "Other"))
+
+ggplot(pronouns, aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "Chosen pronouns", y = "Burning Man participants (%)") +
+  theme_bw()
+  # theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+makeTableData(pronouns) |>
+  kbl(col.names = c(2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:1, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
-### Personal income in 2021
+### Personal income in 2022
 
 ```{r}
-# pi.lt25.22 <- customPlotDat(c("No income", "Less than $7500", 
-#                                  "$7,500-$14,999", "$15,000-$24,999"),
-#                                design = design22, "personalIncome",
-#                                2022, "Less than $25,000")
-# pi.25to50.22 <- customPlotDat(c("$25,000-$34,999", "$35,000-$49,999"),
-#                               design = design22, "personalIncome", 2022,
-#                               "$25,000-$49,999")
-# pi.50to100.22 <- customPlotDat(c("$50,000-$74,999", "$75,000-$99,999"),
-#                                design = design22, "personalIncome",
-#                                2022, "$50,000-$99,999")
-# pi.100to300.22 <- customPlotDat(c("$100,000-$149,999", "$150,000-$299,000"),
-#                                 design = design22, "personalIncome", 2022,
-#                                 "$100,000-$299,999")
-# pi.gt300.22 <- customPlotDat("$300,000 or more", design = design22,
-#                              "personalIncome", 2022, "$300,000 or more")
-# pi.22 <- rbind(pi.lt25.22, pi.25to50.22, pi.50to100.22, pi.100to300.22,
-#                pi.gt300.22)
-# 
-# pi.lt25.19 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design19, "incomep",
-#                                2019, "Less than $25,000")
-# pi.25to50.19 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design19, "incomep", 2019,
-#                               "$25,000-$49,999")
-# pi.50to100.19 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design19, "incomep",
-#                                2019, "$50,000-$99,999")
-# pi.100to300.19 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design19, "incomep", 2019,
-#                                 "$100,000-$299,999")
-# pi.gt300.19 <- customPlotDat("_300kUS_or_more", design = design19,
-#                              "incomep", 2019, "$300,000 or more")
-# pi.19 <- rbind(pi.lt25.19, pi.25to50.19, pi.50to100.19, pi.100to300.19,
-#                pi.gt300.19)
-# 
-# pi.lt25.18 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design18, "incomep",
-#                                2018, "Less than $25,000")
-# pi.25to50.18 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design18, "incomep", 2018,
-#                               "$25,000-$49,999")
-# pi.50to100.18 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design18, "incomep",
-#                                2018, "$50,000-$99,999")
-# pi.100to300.18 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design18, "incomep", 2018,
-#                                 "$100,000-$299,999")
-# pi.gt300.18 <- customPlotDat("_300kUS_or_more", design = design18,
-#                              "incomep", 2018, "$300,000 or more")
-# pi.18 <- rbind(pi.lt25.18, pi.25to50.18, pi.50to100.18, pi.100to300.18,
-#                pi.gt300.18)
-# 
-# pi.lt25.17 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design17, "incomep",
-#                                2017, "Less than $25,000")
-# pi.25to50.17 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design17, "incomep", 2017,
-#                               "$25,000-$49,999")
-# pi.50to100.17 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design17, "incomep",
-#                                2017, "$50,000-$99,999")
-# pi.100to300.17 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design17, "incomep", 2017,
-#                                 "$100,000-$299,999")
-# pi.gt300.17 <- customPlotDat("_300kUS_or_more", design = design17,
-#                              "incomep", 2017, "$300,000 or more")
-# pi.17 <- rbind(pi.lt25.17, pi.25to50.17, pi.50to100.17, pi.100to300.17,
-#                pi.gt300.17)
-# 
-# pi.lt25.16 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design16, "incomep",
-#                                2016, "Less than $25,000")
-# pi.25to50.16 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design16, "incomep", 2016,
-#                               "$25,000-$49,999")
-# pi.50to100.16 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design16, "incomep",
-#                                2016, "$50,000-$99,999")
-# pi.100to300.16 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design16, "incomep", 2016,
-#                                 "$100,000-$299,999")
-# pi.gt300.16 <- customPlotDat("_300kUS_or_more", design = design16,
-#                              "incomep", 2016, "$300,000 or more")
-# pi.16 <- rbind(pi.lt25.16, pi.25to50.16, pi.50to100.16, pi.100to300.16,
-#                pi.gt300.16)
-# 
-# pi.lt25.15 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design15, "incomep",
-#                                2015, "Less than $25,000")
-# pi.25to50.15 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design15, "incomep", 2015,
-#                               "$25,000-$49,999")
-# pi.50to100.15 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design15, "incomep",
-#                                2015, "$50,000-$99,999")
-# pi.100to300.15 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design15, "incomep", 2015,
-#                                 "$100,000-$299,999")
-# pi.gt300.15 <- customPlotDat("_300kUS_or_more", design = design15,
-#                              "incomep", 2015, "$300,000 or more")
-# pi.15 <- rbind(pi.lt25.15, pi.25to50.15, pi.50to100.15, pi.100to300.15,
-#                pi.gt300.15)
-# 
-# pi.allYears <- rbind(pi.22, pi.19, pi.18, pi.17, pi.16, pi.15)
-# pi.allYears$labels <- factor(pi.allYears$labels, 
-#                              levels = c("Less than $25,000",
-#                                         "$25,000-$49,999",
-#                                         "$50,000-$99,999",
-#                                         "$100,000-$299,999",
-#                                         "$300,000 or more"))
-# 
-# ggplot(pi.allYears, aes(x = year, y = est, color = labels)) +
-#   geom_line(linewidth = 1.5, alpha = 0.7) +
-#   geom_point(size = 2.25) +
-#   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
-#   #               linewidth = 1) +
-#   theme_bw(13) +
-#   theme(panel.grid.minor = element_blank()) +
-#   scale_x_continuous(breaks = c(2013:2019, 2022), labels = c(2013:2019, 2022)) +
-#   scale_y_continuous(labels = percent, limits = c(0, NA)) +
-#   scale_color_manual(values = c("#EA008B", "#FF416f", "#FF7457", "#FFA349", 
-#                                 "#FFCF50")) +
-#   labs(x = "", y = "Burning Man participants (%)", color = "Personal income (USD)")
-# 
-# personalIncome <- makePlotData(varName = "What was your personal income in 2021 before taxes? Give your best estimate. Please do not include your spouse's income as your own.", 
-#                          varNameTable,
-#                          designs = list(design15, design16, design17, design18,
-#                                         design19, design22),
-#                          years = c(2015:2019, 2022), 
-#                          levels = c(rep(list(c("_100k_149999US", 
-#                                                "_15000_24999US", 
-#                                                "_150k_299999US", 
-#                                                "_25000_34999US",  
-#                                                "_300kUS_or_more", 
-#                                                "_35000_49999US", 
-#                                                "_50000_74999US", 
-#                                                "_7500_14999US", 
-#                                                "_75000_99999US", 
-#                                                "Less_than_7500US", 
-#                                                "None")), times  = 5),
-#                                     list(c("$100,000-$149,999", "$15,000-$24,999", 
-#                                     "$150,000-$299,000", "$25,000-$34,999",
-#                                     "$300,000 or more", "$35,000-$49,999",
-#                                     "$50,000-$74,999", "$7,500-$14,999",
-#                                     "$75,000-$99,999", "Less than $7500",
-#                                     "No income"))),
-#                          labels = c("$100,000-$149,999", "$15,000-$24,999", 
-#                                     "$150,000-$299,000", "$25,000-$34,999",
-#                                     "$300,000 or more", "$35,000-$49,999",
-#                                     "$50,000-$74,999", "$7,500-$14,999",
-#                                     "$75,000-$99,999", "Less than $7,500",
-#                                     "No income"),
-#                          labelOrder = c("No income", "Less than $7,500", 
-#                                         "$7,500-$14,999", "$15,000-$24,999", 
-#                                         "$25,000-$34,999", "$35,000-$49,999",
-#                                         "$50,000-$74,999", "$75,000-$99,999",
-#                                         "$100,000-$149,999", "$150,000-$299,000",
-#                                         "$300,000 or more"))
-# 
-# 
-# makeTableData(personalIncome) |>
-#   kbl(col.names = c(2015:2019, 2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:7, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+pi.lt25.23 <- customPlotDat(c("No income", "Less than $7500",
+                                 "$7,500-$14,999", "$15,000-$24,999"),
+                               design = design23, "personalIncome",
+                               2023, "Less than $25,000")
+pi.25to50.23 <- customPlotDat(c("$25,000-$34,999", "$35,000-$49,999"),
+                              design = design23, "personalIncome", 2023,
+                              "$25,000-$49,999")
+pi.50to100.23 <- customPlotDat(c("$50,000-$74,999", "$75,000-$99,999"),
+                               design = design23, "personalIncome",
+                               2023, "$50,000-$99,999")
+pi.100to300.23 <- customPlotDat(c("$100,000-$149,999", "$150,000-$299,000"),
+                                design = design23, "personalIncome", 2023,
+                                "$100,000-$299,999")
+pi.gt300.23 <- customPlotDat("$300,000 or more", design = design23,
+                             "personalIncome", 2023, "$300,000 or more")
+pi.23 <- rbind(pi.lt25.23, pi.25to50.23, pi.50to100.23, pi.100to300.23,
+               pi.gt300.23)
+
+pi.lt25.22 <- customPlotDat(c("No income", "Less than $7500",
+                                 "$7,500-$14,999", "$15,000-$24,999"),
+                               design = design22, "personalIncome",
+                               2022, "Less than $25,000")
+pi.25to50.22 <- customPlotDat(c("$25,000-$34,999", "$35,000-$49,999"),
+                              design = design22, "personalIncome", 2022,
+                              "$25,000-$49,999")
+pi.50to100.22 <- customPlotDat(c("$50,000-$74,999", "$75,000-$99,999"),
+                               design = design22, "personalIncome",
+                               2022, "$50,000-$99,999")
+pi.100to300.22 <- customPlotDat(c("$100,000-$149,999", "$150,000-$299,000"),
+                                design = design22, "personalIncome", 2022,
+                                "$100,000-$299,999")
+pi.gt300.22 <- customPlotDat("$300,000 or more", design = design22,
+                             "personalIncome", 2022, "$300,000 or more")
+pi.22 <- rbind(pi.lt25.22, pi.25to50.22, pi.50to100.22, pi.100to300.22,
+               pi.gt300.22)
+
+pi.lt25.19 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design19, "incomep",
+                               2019, "Less than $25,000")
+pi.25to50.19 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design19, "incomep", 2019,
+                              "$25,000-$49,999")
+pi.50to100.19 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design19, "incomep",
+                               2019, "$50,000-$99,999")
+pi.100to300.19 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design19, "incomep", 2019,
+                                "$100,000-$299,999")
+pi.gt300.19 <- customPlotDat("_300kUS_or_more", design = design19,
+                             "incomep", 2019, "$300,000 or more")
+pi.19 <- rbind(pi.lt25.19, pi.25to50.19, pi.50to100.19, pi.100to300.19,
+               pi.gt300.19)
+
+pi.lt25.18 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design18, "incomep",
+                               2018, "Less than $25,000")
+pi.25to50.18 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design18, "incomep", 2018,
+                              "$25,000-$49,999")
+pi.50to100.18 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design18, "incomep",
+                               2018, "$50,000-$99,999")
+pi.100to300.18 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design18, "incomep", 2018,
+                                "$100,000-$299,999")
+pi.gt300.18 <- customPlotDat("_300kUS_or_more", design = design18,
+                             "incomep", 2018, "$300,000 or more")
+pi.18 <- rbind(pi.lt25.18, pi.25to50.18, pi.50to100.18, pi.100to300.18,
+               pi.gt300.18)
+
+pi.lt25.17 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design17, "incomep",
+                               2017, "Less than $25,000")
+pi.25to50.17 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design17, "incomep", 2017,
+                              "$25,000-$49,999")
+pi.50to100.17 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design17, "incomep",
+                               2017, "$50,000-$99,999")
+pi.100to300.17 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design17, "incomep", 2017,
+                                "$100,000-$299,999")
+pi.gt300.17 <- customPlotDat("_300kUS_or_more", design = design17,
+                             "incomep", 2017, "$300,000 or more")
+pi.17 <- rbind(pi.lt25.17, pi.25to50.17, pi.50to100.17, pi.100to300.17,
+               pi.gt300.17)
+
+pi.lt25.16 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design16, "incomep",
+                               2016, "Less than $25,000")
+pi.25to50.16 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design16, "incomep", 2016,
+                              "$25,000-$49,999")
+pi.50to100.16 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design16, "incomep",
+                               2016, "$50,000-$99,999")
+pi.100to300.16 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design16, "incomep", 2016,
+                                "$100,000-$299,999")
+pi.gt300.16 <- customPlotDat("_300kUS_or_more", design = design16,
+                             "incomep", 2016, "$300,000 or more")
+pi.16 <- rbind(pi.lt25.16, pi.25to50.16, pi.50to100.16, pi.100to300.16,
+               pi.gt300.16)
+
+pi.lt25.15 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design15, "incomep",
+                               2015, "Less than $25,000")
+pi.25to50.15 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design15, "incomep", 2015,
+                              "$25,000-$49,999")
+pi.50to100.15 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design15, "incomep",
+                               2015, "$50,000-$99,999")
+pi.100to300.15 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design15, "incomep", 2015,
+                                "$100,000-$299,999")
+pi.gt300.15 <- customPlotDat("_300kUS_or_more", design = design15,
+                             "incomep", 2015, "$300,000 or more")
+pi.15 <- rbind(pi.lt25.15, pi.25to50.15, pi.50to100.15, pi.100to300.15,
+               pi.gt300.15)
+
+pi.allYears <- rbind(pi.23, pi.22, pi.19, pi.18, pi.17, pi.16, pi.15)
+pi.allYears$labels <- factor(pi.allYears$labels,
+                             levels = c("Less than $25,000",
+                                        "$25,000-$49,999",
+                                        "$50,000-$99,999",
+                                        "$100,000-$299,999",
+                                        "$300,000 or more"))
+
+ggplot(pi.allYears, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
+  #               linewidth = 1) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2013:2019, 2022:2023), labels = c(2013:2019, 2022:2023)) +
+  scale_y_continuous(labels = percent, limits = c(0, NA)) +
+  scale_color_manual(values = gradientColors(5)) +
+  labs(x = "", y = "Burning Man participants (%)", color = "Personal income (USD)")
+
+## note: varName below should refer to previous burn year
+personalIncome <- makePlotData(varName = "What was your personal income in 2022 before taxes? Give your best estimate. Please do not include your spouse's income as your own.",
+                         varNameTable,
+                         designs = list(design15, design16, design17, design18,
+                                        design19, design22, design23),
+                         years = c(2015:2019, 2022:2023),
+                         levels = c(rep(list(c("_100k_149999US",
+                                               "_15000_24999US",
+                                               "_150k_299999US",
+                                               "_25000_34999US",
+                                               "_300kUS_or_more",
+                                               "_35000_49999US",
+                                               "_50000_74999US",
+                                               "_7500_14999US",
+                                               "_75000_99999US",
+                                               "Less_than_7500US",
+                                               "None")), times  = 5),
+                                    rep(list(c("$100,000-$149,999", "$15,000-$24,999",
+                                    "$150,000-$299,000", "$25,000-$34,999",
+                                    "$300,000 or more", "$35,000-$49,999",
+                                    "$50,000-$74,999", "$7,500-$14,999",
+                                    "$75,000-$99,999", "Less than $7500",
+                                    "No income")), times = 2)),
+                         labels = c("$100,000-$149,999", "$15,000-$24,999",
+                                    "$150,000-$299,000", "$25,000-$34,999",
+                                    "$300,000 or more", "$35,000-$49,999",
+                                    "$50,000-$74,999", "$7,500-$14,999",
+                                    "$75,000-$99,999", "Less than $7,500",
+                                    "No income"),
+                         labelOrder = c("No income", "Less than $7,500",
+                                        "$7,500-$14,999", "$15,000-$24,999",
+                                        "$25,000-$34,999", "$35,000-$49,999",
+                                        "$50,000-$74,999", "$75,000-$99,999",
+                                        "$100,000-$149,999", "$150,000-$299,000",
+                                        "$300,000 or more"))
+
+
+makeTableData(personalIncome) |>
+  kbl(col.names = c(2015:2019, 2022:2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:8, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
-### Household income in 2021
+### Household income in 2022
 
 ```{r}
-# hi.lt25.22 <- customPlotDat(c("No income", "Less than $7500", 
-#                                  "$7,500-$14,999", "$15,000-$24,999"),
-#                                design = design22, "householdIncome",
-#                                2022, "Less than $25,000")
-# hi.25to50.22 <- customPlotDat(c("$25,000-$34,999", "$35,000-$49,999"),
-#                               design = design22, "householdIncome", 2022,
-#                               "$25,000-$49,999")
-# hi.50to100.22 <- customPlotDat(c("$50,000-$74,999", "$75,000-$99,999"),
-#                                design = design22, "householdIncome",
-#                                2022, "$50,000-$99,999")
-# hi.100to300.22 <- customPlotDat(c("$100,000-$149,999", "$150,000-$299,000"),
-#                                 design = design22, "householdIncome", 2022,
-#                                 "$100,000-$299,999")
-# hi.gt300.22 <- customPlotDat("$300,000 or more", design = design22,
-#                              "householdIncome", 2022, "$300,000 or more")
-# hi.22 <- rbind(hi.lt25.22, hi.25to50.22, hi.50to100.22, hi.100to300.22,
-#                hi.gt300.22)
-# 
-# hi.lt25.19 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design19, "incomeh",
-#                                2019, "Less than $25,000")
-# hi.25to50.19 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design19, "incomeh", 2019,
-#                               "$25,000-$49,999")
-# hi.50to100.19 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design19, "incomeh",
-#                                2019, "$50,000-$99,999")
-# hi.100to300.19 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design19, "incomeh", 2019,
-#                                 "$100,000-$299,999")
-# hi.gt300.19 <- customPlotDat("_300kUS_or_more", design = design19,
-#                              "incomeh", 2019, "$300,000 or more")
-# hi.19 <- rbind(hi.lt25.19, hi.25to50.19, hi.50to100.19, hi.100to300.19,
-#                hi.gt300.19)
-# 
-# hi.lt25.18 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design18, "incomeh",
-#                                2018, "Less than $25,000")
-# hi.25to50.18 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design18, "incomeh", 2018,
-#                               "$25,000-$49,999")
-# hi.50to100.18 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design18, "incomeh",
-#                                2018, "$50,000-$99,999")
-# hi.100to300.18 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design18, "incomeh", 2018,
-#                                 "$100,000-$299,999")
-# hi.gt300.18 <- customPlotDat("_300kUS_or_more", design = design18,
-#                              "incomeh", 2018, "$300,000 or more")
-# hi.18 <- rbind(hi.lt25.18, hi.25to50.18, hi.50to100.18, hi.100to300.18,
-#                hi.gt300.18)
-# 
-# hi.lt25.17 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design17, "incomeh",
-#                                2017, "Less than $25,000")
-# hi.25to50.17 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design17, "incomeh", 2017,
-#                               "$25,000-$49,999")
-# hi.50to100.17 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design17, "incomeh",
-#                                2017, "$50,000-$99,999")
-# hi.100to300.17 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design17, "incomeh", 2017,
-#                                 "$100,000-$299,999")
-# hi.gt300.17 <- customPlotDat("_300kUS_or_more", design = design17,
-#                              "incomeh", 2017, "$300,000 or more")
-# hi.17 <- rbind(hi.lt25.17, hi.25to50.17, hi.50to100.17, hi.100to300.17,
-#                hi.gt300.17)
-# 
-# hi.lt25.16 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design16, "incomeh",
-#                                2016, "Less than $25,000")
-# hi.25to50.16 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design16, "incomeh", 2016,
-#                               "$25,000-$49,999")
-# hi.50to100.16 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design16, "incomeh",
-#                                2016, "$50,000-$99,999")
-# hi.100to300.16 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design16, "incomeh", 2016,
-#                                 "$100,000-$299,999")
-# hi.gt300.16 <- customPlotDat("_300kUS_or_more", design = design16,
-#                              "incomeh", 2016, "$300,000 or more")
-# hi.16 <- rbind(hi.lt25.16, hi.25to50.16, hi.50to100.16, hi.100to300.16,
-#                hi.gt300.16)
-# 
-# hi.lt25.15 <- customPlotDat(c("None", "Less_than_7500US", 
-#                                  "_7500_14999US", "_15000_24999US"),
-#                                design = design15, "incomeh",
-#                                2015, "Less than $25,000")
-# hi.25to50.15 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
-#                               design = design15, "incomeh", 2015,
-#                               "$25,000-$49,999")
-# hi.50to100.15 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
-#                                design = design15, "incomeh",
-#                                2015, "$50,000-$99,999")
-# hi.100to300.15 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
-#                                 design = design15, "incomeh", 2015,
-#                                 "$100,000-$299,999")
-# hi.gt300.15 <- customPlotDat("_300kUS_or_more", design = design15,
-#                              "incomeh", 2015, "$300,000 or more")
-# hi.15 <- rbind(hi.lt25.15, hi.25to50.15, hi.50to100.15, hi.100to300.15,
-#                hi.gt300.15)
-# 
-# hi.allYears <- rbind(hi.22, hi.19, hi.18, hi.17, hi.16, hi.15)
-# hi.allYears$labels <- factor(hi.allYears$labels, 
-#                              levels = c("Less than $25,000",
-#                                         "$25,000-$49,999",
-#                                         "$50,000-$99,999",
-#                                         "$100,000-$299,999",
-#                                         "$300,000 or more"))
-# 
-# ggplot(hi.allYears, aes(x = year, y = est, color = labels)) +
-#   geom_line(linewidth = 1.5, alpha = 0.7) +
-#   geom_point(size = 2.25) +
-#   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
-#   #               linewidth = 1) +
-#   theme_bw(13) +
-#   theme(panel.grid.minor = element_blank()) +
-#   scale_x_continuous(breaks = c(2013:2019, 2022), labels = c(2013:2019, 2022)) +
-#   scale_y_continuous(labels = percent, limits = c(0, NA)) +
-#   scale_color_manual(values = c("#EA008B", "#FF416f", "#FF7457", "#FFA349", 
-#                                 "#FFCF50")) +
-#   labs(x = "", y = "Burning Man participants (%)", color = "Household income (USD)")
-# 
-# householdIncome <- makePlotData(varName = "What was the total income before taxes of all members of your household (including you) in 2021?", 
-#                          varNameTable,
-#                          designs = list(design15, design16, design17, design18,
-#                                         design19, design22),
-#                          years = c(2015:2019, 2022), 
-#                          levels = c(rep(list(c("_100k_149999US", 
-#                                                "_15000_24999US", 
-#                                                "_150k_299999US", 
-#                                                "_25000_34999US",  
-#                                                "_300kUS_or_more", 
-#                                                "_35000_49999US", 
-#                                                "_50000_74999US", 
-#                                                "_7500_14999US", 
-#                                                "_75000_99999US", 
-#                                                "Less_than_7500US", 
-#                                                "None")), times  = 5),
-#                                     list(c("$100,000-$149,999", "$15,000-$24,999", 
-#                                     "$150,000-$299,000", "$25,000-$34,999",
-#                                     "$300,000 or more", "$35,000-$49,999",
-#                                     "$50,000-$74,999", "$7,500-$14,999",
-#                                     "$75,000-$99,999", "Less than $7500",
-#                                     "No income"))),
-#                          labels = c("$100,000-$149,999", "$15,000-$24,999", 
-#                                     "$150,000-$299,000", "$25,000-$34,999",
-#                                     "$300,000 or more", "$35,000-$49,999",
-#                                     "$50,000-$74,999", "$7,500-$14,999",
-#                                     "$75,000-$99,999", "Less than $7,500",
-#                                     "No income"),
-#                          labelOrder = c("No income", "Less than $7,500", 
-#                                         "$7,500-$14,999", "$15,000-$24,999", 
-#                                         "$25,000-$34,999", "$35,000-$49,999",
-#                                         "$50,000-$74,999", "$75,000-$99,999",
-#                                         "$100,000-$149,999", "$150,000-$299,000",
-#                                         "$300,000 or more"))
-# 
-# makeTableData(householdIncome) |>
-#   kbl(col.names = c(2015:2019, 2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:7, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+hi.lt25.23 <- customPlotDat(c("No income", "Less than $7500",
+                                 "$7,500-$14,999", "$15,000-$24,999"),
+                               design = design23, "householdIncome",
+                               2023, "Less than $25,000")
+hi.25to50.23 <- customPlotDat(c("$25,000-$34,999", "$35,000-$49,999"),
+                              design = design23, "householdIncome", 2023,
+                              "$25,000-$49,999")
+hi.50to100.23 <- customPlotDat(c("$50,000-$74,999", "$75,000-$99,999"),
+                               design = design23, "householdIncome",
+                               2023, "$50,000-$99,999")
+hi.100to300.23 <- customPlotDat(c("$100,000-$149,999", "$150,000-$299,000"),
+                                design = design23, "householdIncome", 2023,
+                                "$100,000-$299,999")
+hi.gt300.23 <- customPlotDat("$300,000 or more", design = design23,
+                             "householdIncome", 2023, "$300,000 or more")
+hi.23 <- rbind(hi.lt25.23, hi.25to50.23, hi.50to100.23, hi.100to300.23,
+               hi.gt300.23)
+
+hi.lt25.22 <- customPlotDat(c("No income", "Less than $7500",
+                                 "$7,500-$14,999", "$15,000-$24,999"),
+                               design = design22, "householdIncome",
+                               2022, "Less than $25,000")
+hi.25to50.22 <- customPlotDat(c("$25,000-$34,999", "$35,000-$49,999"),
+                              design = design22, "householdIncome", 2022,
+                              "$25,000-$49,999")
+hi.50to100.22 <- customPlotDat(c("$50,000-$74,999", "$75,000-$99,999"),
+                               design = design22, "householdIncome",
+                               2022, "$50,000-$99,999")
+hi.100to300.22 <- customPlotDat(c("$100,000-$149,999", "$150,000-$299,000"),
+                                design = design22, "householdIncome", 2022,
+                                "$100,000-$299,999")
+hi.gt300.22 <- customPlotDat("$300,000 or more", design = design22,
+                             "householdIncome", 2022, "$300,000 or more")
+hi.22 <- rbind(hi.lt25.22, hi.25to50.22, hi.50to100.22, hi.100to300.22,
+               hi.gt300.22)
+
+hi.lt25.19 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design19, "incomeh",
+                               2019, "Less than $25,000")
+hi.25to50.19 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design19, "incomeh", 2019,
+                              "$25,000-$49,999")
+hi.50to100.19 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design19, "incomeh",
+                               2019, "$50,000-$99,999")
+hi.100to300.19 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design19, "incomeh", 2019,
+                                "$100,000-$299,999")
+hi.gt300.19 <- customPlotDat("_300kUS_or_more", design = design19,
+                             "incomeh", 2019, "$300,000 or more")
+hi.19 <- rbind(hi.lt25.19, hi.25to50.19, hi.50to100.19, hi.100to300.19,
+               hi.gt300.19)
+
+hi.lt25.18 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design18, "incomeh",
+                               2018, "Less than $25,000")
+hi.25to50.18 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design18, "incomeh", 2018,
+                              "$25,000-$49,999")
+hi.50to100.18 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design18, "incomeh",
+                               2018, "$50,000-$99,999")
+hi.100to300.18 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design18, "incomeh", 2018,
+                                "$100,000-$299,999")
+hi.gt300.18 <- customPlotDat("_300kUS_or_more", design = design18,
+                             "incomeh", 2018, "$300,000 or more")
+hi.18 <- rbind(hi.lt25.18, hi.25to50.18, hi.50to100.18, hi.100to300.18,
+               hi.gt300.18)
+
+hi.lt25.17 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design17, "incomeh",
+                               2017, "Less than $25,000")
+hi.25to50.17 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design17, "incomeh", 2017,
+                              "$25,000-$49,999")
+hi.50to100.17 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design17, "incomeh",
+                               2017, "$50,000-$99,999")
+hi.100to300.17 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design17, "incomeh", 2017,
+                                "$100,000-$299,999")
+hi.gt300.17 <- customPlotDat("_300kUS_or_more", design = design17,
+                             "incomeh", 2017, "$300,000 or more")
+hi.17 <- rbind(hi.lt25.17, hi.25to50.17, hi.50to100.17, hi.100to300.17,
+               hi.gt300.17)
+
+hi.lt25.16 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design16, "incomeh",
+                               2016, "Less than $25,000")
+hi.25to50.16 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design16, "incomeh", 2016,
+                              "$25,000-$49,999")
+hi.50to100.16 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design16, "incomeh",
+                               2016, "$50,000-$99,999")
+hi.100to300.16 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design16, "incomeh", 2016,
+                                "$100,000-$299,999")
+hi.gt300.16 <- customPlotDat("_300kUS_or_more", design = design16,
+                             "incomeh", 2016, "$300,000 or more")
+hi.16 <- rbind(hi.lt25.16, hi.25to50.16, hi.50to100.16, hi.100to300.16,
+               hi.gt300.16)
+
+hi.lt25.15 <- customPlotDat(c("None", "Less_than_7500US",
+                                 "_7500_14999US", "_15000_24999US"),
+                               design = design15, "incomeh",
+                               2015, "Less than $25,000")
+hi.25to50.15 <- customPlotDat(c("_25000_34999US", "_35000_49999US"),
+                              design = design15, "incomeh", 2015,
+                              "$25,000-$49,999")
+hi.50to100.15 <- customPlotDat(c("_50000_74999US", "_75000_99999US"),
+                               design = design15, "incomeh",
+                               2015, "$50,000-$99,999")
+hi.100to300.15 <- customPlotDat(c("_100k_149999US", "_150k_299999US"),
+                                design = design15, "incomeh", 2015,
+                                "$100,000-$299,999")
+hi.gt300.15 <- customPlotDat("_300kUS_or_more", design = design15,
+                             "incomeh", 2015, "$300,000 or more")
+hi.15 <- rbind(hi.lt25.15, hi.25to50.15, hi.50to100.15, hi.100to300.15,
+               hi.gt300.15)
+
+hi.allYears <- rbind(hi.23, hi.22, hi.19, hi.18, hi.17, hi.16, hi.15)
+hi.allYears$labels <- factor(hi.allYears$labels,
+                             levels = c("Less than $25,000",
+                                        "$25,000-$49,999",
+                                        "$50,000-$99,999",
+                                        "$100,000-$299,999",
+                                        "$300,000 or more"))
+
+ggplot(hi.allYears, aes(x = year, y = est, color = labels)) +
+  geom_line(linewidth = 1.5, alpha = 0.7) +
+  geom_point(size = 2.25) +
+  # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
+  #               linewidth = 1) +
+  theme_bw(13) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = c(2013:2019, 2022:2023), labels = c(2013:2019, 2022:2023)) +
+  scale_y_continuous(labels = percent, limits = c(0, NA)) +
+  scale_color_manual(values = gradientColors(5)) +
+  labs(x = "", y = "Burning Man participants (%)", color = "Household income (USD)")
+
+householdIncome <- makePlotData(varName = "What was the total income before taxes of all members of your household (including you) in 2022?",
+                         varNameTable,
+                         designs = list(design15, design16, design17, design18,
+                                        design19, design22, design23),
+                         years = c(2015:2019, 2022:2023),
+                         levels = c(rep(list(c("_100k_149999US",
+                                               "_15000_24999US",
+                                               "_150k_299999US",
+                                               "_25000_34999US",
+                                               "_300kUS_or_more",
+                                               "_35000_49999US",
+                                               "_50000_74999US",
+                                               "_7500_14999US",
+                                               "_75000_99999US",
+                                               "Less_than_7500US",
+                                               "None")), times  = 5),
+                                    rep(list(c("$100,000-$149,999", "$15,000-$24,999",
+                                    "$150,000-$299,000", "$25,000-$34,999",
+                                    "$300,000 or more", "$35,000-$49,999",
+                                    "$50,000-$74,999", "$7,500-$14,999",
+                                    "$75,000-$99,999", "Less than $7500",
+                                    "No income")), times=2)),
+                         labels = c("$100,000-$149,999", "$15,000-$24,999",
+                                    "$150,000-$299,000", "$25,000-$34,999",
+                                    "$300,000 or more", "$35,000-$49,999",
+                                    "$50,000-$74,999", "$7,500-$14,999",
+                                    "$75,000-$99,999", "Less than $7,500",
+                                    "No income"),
+                         labelOrder = c("No income", "Less than $7,500",
+                                        "$7,500-$14,999", "$15,000-$24,999",
+                                        "$25,000-$34,999", "$35,000-$49,999",
+                                        "$50,000-$74,999", "$75,000-$99,999",
+                                        "$100,000-$149,999", "$150,000-$299,000",
+                                        "$300,000 or more"))
+
+makeTableData(householdIncome) |>
+  kbl(col.names = c(2015:2019, 2022:2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:8, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ### Highest level of education completed
@@ -739,6 +812,91 @@ ggplot(myDat, aes(x = Year, y = Percentage, fill = rows)) +
 ### Residence outside of Black Rock City
 
 ```{r}
+library(cartogram)
+library(sf)
+library(tmap)
+library(tigris)
+library(zipcodeR)
+
+theZipz <- census23$reside.ZIP
+
+theZipz[nchar(theZipz) >5 & !is.na(theZipz)] <- gsub(
+  "-.{4}$",
+  "",
+  theZipz[nchar(theZipz) >5 & !is.na(theZipz)]
+) # remove last 4 of zip codes
+
+Zs <- lapply(theZipz, function(u){
+  if (is.na(u)) {
+    NA
+  } else {
+    reverse_zipcode(u)
+  }
+}
+)
+
+burnerState <- sapply(Zs, function(v){
+  if (length(v)>1) {
+    v$state
+  } else {
+    NA
+  }
+}
+)
+
+statesWeights <- tapply(census23$weights, burnerState, sum)
+statesWeights <- statesWeights/sum(statesWeights)*100
+
+statesPercents <- sort(round(statesWeights,2), decreasing=TRUE) # weighted
+
+burnersByState <- data.frame(STATE = names(statesPercents), Percent = statesPercents)
+
+# adding mississippi
+burnersByState <- rbind(burnersByState, data.frame(STATE="MS",Percent=0))
+
+## plotting
+usa <- states(cb = TRUE, progress_bar = FALSE) %>%
+  shift_geometry()
+
+usa$STATE <- c(state.abb, "DC", "PR")[
+  match(usa$NAME, c(state.name, "District of Columbia", "Puerto Rico"),)
+  ]
+
+usa2 <- merge(usa, burnersByState, by="STATE")
+
+usa2 <- st_transform(usa2, 3395)
+
+# construct cartogram
+usa2_cont <- cartogram_cont(usa2, "Percent", 
+                            itermax = 15,
+                            threshold = 0.01,
+                            verbose=FALSE) %>%
+  st_cast()
+
+# plot it
+tm_shape(usa2_cont) + 
+  tm_polygons("Percent", style = "jenks", 
+              palette=gradientColors(3)) +
+  tm_layout("Frequency of US residence",title.position=c(0.5, 0.9),
+            frame = FALSE, legend.position = c(0.8,0.1),
+            legend.outside=FALSE) + 
+  tm_text("STATE", size = 1/2, remove.overlap = FALSE)
+
+## table of 
+
+names(statesPercents) <- c(state.name, "District of Columbia", "Puerto Rico")[
+  match(names(statesPercents), c(state.abb, "DC", "PR"),)
+]
+
+head(data.frame(statesPercents),12) |>
+  kbl(col.names = c("Percentage"), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:1, width_min = "10.5em") |>
+  scroll_box(width = "100%")
+
+
+
 reside <- makePlotData("Where do you usually reside/live (when not in Black Rock City)?",
                        varNameTable = varNameTable,
                        designs = list(design13, design14, design15,
