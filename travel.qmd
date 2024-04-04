@@ -24,7 +24,7 @@ design16$variables$bxbforother <- census16$bxbforother
 
 gradientColors <- colorRampPalette(c("#EA008B", "#B0AEDC", "#554149"))
 discreteColors <- c("#EA008B", "#B0AEDC", "#554149", "#A07200", "#AADA91", 
-                    "#FF7457", "#FFCF50", "#6FCFEB", "#FF8189", "#FFFF3B")
+                    "#FF8189", "#FFCF50", "#6FCFEB", "#76236C", "#FFFF3B")
 ```
 
 
@@ -1382,7 +1382,9 @@ gerlachStops23 <- makePlotData("As you passed through the town of Gerlach, did y
                              labelOrder = c(11, 5, 8, 10, 1, 7, 3, 9, 12, 4, 2, 6, 13, 14)[14:1])
 
 gerlachStops22 <- makePlotData("As you passed through the town of Gerlach, did you stop at/visit any of the following locations?",
-                             varNameTable = varNameTable[-380,], #Removing friends of black rock
+                               #Removing friends of black rock
+                               varNameTable = varNameTable[!grepl("Friends of Black Rock City",
+                                                                  varNameTable$option),], 
                              designs = list(design22),
                              years = 2022,
                              levels = rep(list(TRUE), times = 1),
