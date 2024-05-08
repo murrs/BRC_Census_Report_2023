@@ -13,7 +13,9 @@ book:
     - perspectives.qmd
     - travel.qmd
     - camp_logistics.qmd
+    - acknowledgments.qmd
     - references.qmd
+  cover-image: Logo.png
 
 bibliography: references.bib
 

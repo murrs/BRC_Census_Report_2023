@@ -1,44 +1,22 @@
 # Welcome {.unnumbered}
 
-# Forward {.unnumbered}
+The Census is a collaborative research project that started in 2002. Although 
+the Black Rock City (BRC) Census project is technically a survey and not a 
+literal census (where data is collected from every member of a population), 
+our methodology allows us to report estimates that are representative of the 
+entire population of BRC and not just on the individuals who 
+participate actively in our data collection efforts.
 
-Some text here
+While BRC Census has been producing reports since 2002, it is hard to compare 
+recent data with reports from earlier years (before 2013) because of important 
+differences in methodology, from a convenience sample of Census Lab 
+visitors on-playa to a weighted online survey conducted post-event. 
+The results in this report are estimates of the Black Rock City population. 
+The true population values may differ from the presented estimates due to random 
+variation in the sampling process. This report contains estimates from data 
+collected in 2023 and, when possible, comparable estimates from 2013 through 
+2019 and 2022.
 
-## Contributions and acknowledgments {.unnumbered}
-
-**BRC Census General Manager:** Andi "Sonder" Morency, Ph.D.
-
-**Principal Investigator:** Samuel Ehrenreich, Ph.D.
-
-**Study Design and Data Analysis and Visualization:** Aaron "Murrs" Shev, Ph.D.
-
-**Special thanks and acknowledgements:**
-
--   The nearly 200 volunteers of the 2023 Census Lab including: research collaborators, volunteer coordinators, camp builders, gate samplers, key punchers, Census Lab hosts, graphic designers, and many more!
-
--   Special thanks to Dana "DV8" DeVaul whose work on the 2018 population report was the basis for many elements in this report, and to Dominic "Hunter" Beaulieu-Prévost for cleaning and weighting data from 2013 to 2019.
-
--   We would also like to thank Dominique DeBucquoy "Great Question" Dodley, Leslie Moyer, Carly "I-Carly" Rhodes, and the Burning Man Communications Department.
-
--   Additionally, we would like to extend our sincere thanks to all of the Burning Man participants who have taken the time to provide their data. This project would not exist without our respondents.
-
--   Finally, our thanks to Burning Man Project for the resources they provide both on playa and off playa and for believing in the Black Rock City Census!
-
-## For more information {.unnumbered}
-
-To contact the Census Lab, email census\@burningman.org
-
-Census Lab Blog: <https://journal.burningman.org/author/census/>
-
-Census Lab Data Archive: <https://burningman.org/culture/history/brc-history/census-data/>
-
-Citation: Shev, A.B., Morency A., and the 2023 Census Lab. (2024). Black Rock City Census: 2013-2023 Population Analysis. Black Rock City Census.
-
-Copyright © 2024 Shev et al.
-
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown', 'survey', 'anesrake', 'ggplot2'
-), 'packages.bib')
-```
+The BRC Census project is made possible through the extensive collective effort 
+of volunteers, academic researchers, and Burning Man Project. Our thanks to 
+everyone whose contributions went into the creation of this report!

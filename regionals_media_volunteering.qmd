@@ -47,16 +47,17 @@ attendRegional <- makePlotData("Have you ever attended any Regional Burning Man 
                                           "Not connected \n to regional",
                                           "Volunteered with \n a regional"),
                                labelOrder = c(4,1,2,3))
-attendRegional$attend <- rep(c("Attended or volunteered \n with a regional event", 
+attendRegional$attend <- rep(c("Attended or \n volunteered with \n a regional event", 
                                "Did not attend a \n regional event", 
                                "Did not attend a \n regional event", 
-                               "Attended a regional"), times = 9)
+                               "Attended a \n regional"), times = 9)
 
 
 ggplot(attendRegional, aes(x = year, y = est, fill = labels)) +
   geom_bar(stat = "identity") +
-  theme_bw(13) +
-  theme(panel.grid.minor = element_blank()) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), labels = c(2013:2019, 2022:2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
   scale_fill_manual(values = discreteColors[c(2,1,3,4)]) +
@@ -178,7 +179,7 @@ regionalInvolve$labels <- factor(regionalInvolve$labels,
 # ggplot(regionalInvolve, aes(x = year, y = est, color = labels)) +
 #   geom_line(linewidth = 1.5, alpha = 0.7) +
 #   geom_point(size = 2.25) +
-#   theme_bw(13) +
+#   theme_bw() +
 #   theme(panel.grid.minor = element_blank()) +
 #   scale_x_continuous(breaks = c(2014:2019, 2022:2023), 
 #                      labels = c(2014:2019, 2022:2023)) +
@@ -296,8 +297,17 @@ ggplot(BMMedia, aes(x = year, y = est, fill = level)) +
   facet_wrap(~labels, nrow = 2)
 
 BMMedia2 <- BMMedia
-#Need to specify level order.  I'll do this later
+
 BMMedia2$labels <- factor(paste0(BMMedia2$labels, " (", BMMedia2$level, ")"))
+BMMedia2$labels <- factor(BMMedia2$labels, 
+                             levels = levels(BMMedia2$labels)[c(1,3,2,4,6,5,7,9,8,
+                                                                10,12,11,13,15,14,
+                                                                16,18,17,19,21,20,
+                                                                22,24,23,25,27,26,
+                                                                28,30,29,31,33,32,
+                                                                34,36,35,37,39,38,
+                                                                40,42,41,43,45,44,
+                                                                46,48,47)])
 
 makeTableData(BMMedia2) |>
   kbl(col.names = c(2015:2019, 2022:2023),
@@ -320,8 +330,8 @@ notBMMedia.never <- makePlotData("Which of the following media NOT managed by Bu
                                        design23),
                         years = c(2022:2023),
                         levels = c(as.list(rep("Never", times = 7))),
-                        labels = c("Social media or \n discussion lists from \n established \n Burning Man camps",
-                                   "Regional newsletter \n or social media \n managed by Regional \n event organizers",
+                        labels = c("Social media or discussion \n lists from established \n Burning Man camps",
+                                   "Regional newsletter or social \n media managed by Regional \n event organizers",
                                    "Regional website",
                                    "Regional discussion \n list",
                                    "Other social \n media",
@@ -335,8 +345,8 @@ notBMMedia.rarely <- makePlotData("Which of the following media NOT managed by B
                                        design23),
                         years = c(2022:2023),
                         levels = c(as.list(rep("Rarely", times = 7))),
-                        labels = c("Social media or \n discussion lists from \n established Burning \n Man camps",
-                                   "Regional newsletter \n or social media \n managed by Regional \n event organizers",
+                        labels = c("Social media or discussion \n lists from established \n Burning Man camps",
+                                   "Regional newsletter or social \n media managed by Regional \n event organizers",
                                    "Regional website",
                                    "Regional discussion \n list",
                                    "Other social \n media",
@@ -350,8 +360,8 @@ notBMMedia.often <- makePlotData("Which of the following media NOT managed by Bu
                                        design23),
                         years = c(2022:2023),
                         levels = c(as.list(rep("Often", times = 7))),
-                        labels = c("Social media or \n discussion lists from \n established Burning \n Man camps",
-                                   "Regional newsletter \n or social media \n managed by Regional \n event organizers",
+                        labels = c("Social media or discussion \n lists from established \n Burning Man camps",
+                                   "Regional newsletter or social \n media managed by Regional \n event organizers",
                                    "Regional website",
                                    "Regional discussion \n list",
                                    "Other social \n media",
@@ -375,11 +385,20 @@ ggplot(notBMMedia, aes(x = year, y = est, fill = level)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
         panel.grid.minor = element_blank()) +
   guides(fill = guide_legend(reverse = TRUE)) +
-  facet_wrap(~labels, ncol = 4)
+  facet_wrap(~labels, ncol = 3)
 
 notBMMedia2 <- notBMMedia
-#Need to specify level order.  I'll do this later
+
 notBMMedia2$labels <- factor(paste0(notBMMedia2$labels, " (", notBMMedia2$level, ")"))
+notBMMedia2$labels <- factor(notBMMedia2$labels, 
+                             levels = levels(notBMMedia2$labels)[c(1,3,2,4,6,5,7,9,8,
+                                                                   10,12,11,13,15,14,
+                                                                   16,18,17,19,21,20,
+                                                                   22,24,23,25,27,26,
+                                                                   28,30,29,31,33,32,
+                                                                   34,36,35,37,39,38,
+                                                                   40,42,41,43,45,44,
+                                                                   46,48,47)])
 
 makeTableData(notBMMedia2) |>
   kbl(col.names = c(2022:2023),
@@ -407,7 +426,7 @@ valuableInfo <- makePlotData("What types of information do you find most valuabl
                                            "Bay Area events",
                                            "Events around the world",
                                            "Burning Man Regional events",
-                                           "Volunteer opportunits with \n teams or departments",
+                                           "Volunteer opportunities with \n teams or departments",
                                            "Opportunities to create \n or assist with art",
                                            "Black Rock City preparation \n information",
                                            "Information about camps",
@@ -460,7 +479,7 @@ bmir <- makePlotData("Have you listened to BMIR (Burning Man Information Radio) 
 ggplot(bmir, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2014:2019, 2022:2023), 
                      labels = c(2014:2019, 2022:2023)) +
@@ -728,7 +747,7 @@ skillsUseful <- makePlotData("Have any of these skills proved useful in the defa
 ggplot(skillsUseful, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5) +
   geom_point(size = 2.25, color = "black") +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2016:2019, 2022:2023), 
                      labels = c(2016:2019, 2022:2023)) +

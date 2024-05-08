@@ -19,6 +19,12 @@ randomSample2023[, ageCat5 := ifelse(between(age, 0, 29), "0-29",
                                             ifelse(between(age, 40, 49), "40-49",
                                                    ifelse(between(age, 50, 59), "50-59",
                                                           ifelse(age >= 60, "60+", NA)))))]
+randomSample2023[, ID := paste0(`Shift nb`, `Lane`, `Clicker`, `Person numerator`)]
+# randomSample2023[, `Sampling site` := factor(ifelse(`Sampling site` == 1, "BxB",
+#                                                     ifelse(`Sampling site` == 2, "Airport",
+#                                                            ifelse(`Sampling site` == 3, "Gate", NA))),
+#                                              levels = c("Gate", "BxB", "Airport"))]
+randomSample2023 <- randomSample2023[!is.na(`Sampling site`)]
 # randomSample2022 <- fread("C:\\Users\\ashev\\Documents\\census\\report_2022\\allRandomSamples2022.tsv", sep = "\t")
 #Read in cleaned online survey data
 online2023 <- fread("cleaned2023.tsv", sep = "\t")
@@ -26,74 +32,74 @@ online2023 <- do.call(data.table, lapply(online2023, function(x){
   ifelse(x == "", NA, x)}))
 
 #Create "population" data sets for raking based off random sample
-totPop = 72000
-# early.ipf <- data.frame(early.ipf = c("Early", "Not early"), freq = (c(918, 2593)))
-# early.ipf$freq <- early.ipf$freq / sum(early.ipf$freq) * totPop
-# early.target <- early.ipf$freq / totPop
-# names(early.target) <- early.ipf$early.ipf
-
-nbburns.ipf <- data.frame(nbburns.ipf = c("Virgin", "1", "2", "3-4", "5-7", "8+"),
-                          freq = c(sum(randomSample2023$`Number of burns (TOTAL YEARS) (4b)` == 1 | 
-                                         (is.na(randomSample2023$`Number of burns (TOTAL YEARS) (4b)`) &
-                                            !is.na(randomSample2023$`What was the first language you learned (5)`)), na.rm = TRUE),
-                                   sum(randomSample2023$`Number of burns (TOTAL YEARS) (4b)` == 2, na.rm = TRUE),
-                                   sum(randomSample2023$`Number of burns (TOTAL YEARS) (4b)` == 4, na.rm = TRUE),
-                                   sum((randomSample2023$`Number of burns (TOTAL YEARS) (4b)` >= 4) &
-                                         (randomSample2023$`Number of burns (TOTAL YEARS) (4b)` <= 5), na.rm = TRUE),
-                                   sum((randomSample2023$`Number of burns (TOTAL YEARS) (4b)` >= 6) &
-                                         (randomSample2023$`Number of burns (TOTAL YEARS) (4b)` <= 8), na.rm = TRUE),
-                                   sum(randomSample2023$`Number of burns (TOTAL YEARS) (4b)` >= 9, na.rm = TRUE)))
-nbburns.ipf$freq <- nbburns.ipf$freq / sum(nbburns.ipf$freq) * totPop
-nbburns.target <- nbburns.ipf$freq / totPop
-names(nbburns.target) <- nbburns.ipf$nbburns.ipf
-
-gender.ipf <- data.frame(gender.ipf = c("Female", "Male", "Other"),
-                         freq = c(sum(randomSample2023$`What is your current gender (3)` == 1, na.rm = TRUE),
-                                  sum(randomSample2023$`What is your current gender (3)` == 2, na.rm = TRUE),
-                                  sum(randomSample2023$`What is your current gender (3)` %in% c(3, 7, 9), na.rm = TRUE)))
-gender.ipf$freq <- gender.ipf$freq / sum(gender.ipf$freq) * totPop
-gender.target <- gender.ipf$freq / totPop
-names(gender.target) = gender.ipf$gender.ipf
-
-age.ipf <- data.frame(age.ipf = c("0-29", "30-39", "40-49", "50-59", "60+"),
-                      freq = c(sum(randomSample2023$ageCat5 == "0-29", na.rm = TRUE),
-                               sum(randomSample2023$ageCat5 == "30-39", na.rm = TRUE),
-                               sum(randomSample2023$ageCat5 == "40-49", na.rm = TRUE),
-                               sum(randomSample2023$ageCat5 == "50-59", na.rm = TRUE),
-                               sum(randomSample2023$ageCat5 == "60+", na.rm = TRUE)))
-age.ipf$freq <- age.ipf$freq / sum(age.ipf$freq) * totPop
-age.target <- age.ipf$freq / totPop
-names(age.target) = age.ipf$age.ipf
-
-english.ipf <- data.frame(english.ipf = c("English", "Other language"),
-                          freq = c(sum(randomSample2023$`What was the first language you learned (5)` == 1, na.rm = TRUE),
-                                   sum(randomSample2023$`What was the first language you learned (5)` %in% (2:9), na.rm = TRUE)))
-english.ipf$freq <- english.ipf$freq / sum(english.ipf$freq) * totPop
-english.target <- english.ipf$freq / totPop
-names(english.target) = english.ipf$english.ipf
+totPop <- 77100
+bxbPop <- 7349
+airportPop <- 1842
+gatePop <- totPop - bxbPop - airportPop
+randomSample2023[, entryPop := ifelse(`Sampling site` == 1, bxbPop,
+                                      ifelse(`Sampling site` == 2, airportPop,
+                                             ifelse(`Sampling site` == 3, gatePop, NA)))]
 
 
-foreign.ipf <- data.frame(foreign.ipf = c("US", "Other country"),
-                          freq = c(sum(randomSample2023$`Where do you usually reside (2)` %in% (1:3), na.rm = TRUE),
-                                   sum(randomSample2023$`Where do you usually reside (2)` %in% (4:6), na.rm = TRUE)))
-foreign.ipf$freq <- foreign.ipf$freq / sum(foreign.ipf$freq) * totPop
-foreign.target <- foreign.ipf$freq / totPop
-names(foreign.target) = foreign.ipf$foreign.ipf
+randomSample2023[, nbburns := ifelse(((`Number of burns (TOTAL YEARS) (4b)` == 1) | 
+                                        (is.na(`Number of burns (TOTAL YEARS) (4b)`) &
+                                           !is.na(`What was the first language you learned (5)`))),
+                                     "Virgin",
+                                     ifelse(`Number of burns (TOTAL YEARS) (4b)` == 2, "1",
+                                            ifelse(`Number of burns (TOTAL YEARS) (4b)` == 3, "2",
+                                                   ifelse((`Number of burns (TOTAL YEARS) (4b)` >= 4) &
+                                                            (`Number of burns (TOTAL YEARS) (4b)` <= 5), "3-4",
+                                                          ifelse((`Number of burns (TOTAL YEARS) (4b)` >= 6) &
+                                                                   (`Number of burns (TOTAL YEARS) (4b)` <= 8), "5-7",
+                                                                 ifelse(`Number of burns (TOTAL YEARS) (4b)` >= 9, "8+", NA))))))]
+randomSample2023[, nbburns := factor(nbburns, levels = c("Virgin", "1", "2", "3-4", "5-7", "8+"))]
 
-notEligible <- sum(randomSample2023$`Are you eligible to vote (6a)` == 2,
-                   na.rm = TRUE)
-party.ipf <- data.frame(party.ipf = c("Not eligible", "Democrat", "Green", 
-                                      "Libertarian", "Republican", "Other", "None"),
-                        freq = c(notEligible,
-                                 sum(randomSample2023$`With which political party are you currently affiliated (6c)` == 1, na.rm = TRUE),
-                                 sum(randomSample2023$`With which political party are you currently affiliated (6c)` == 2, na.rm = TRUE),
-                                 sum(randomSample2023$`With which political party are you currently affiliated (6c)` == 3, na.rm = TRUE),
-                                 sum(randomSample2023$`With which political party are you currently affiliated (6c)` == 4, na.rm = TRUE),
-                                 sum(randomSample2023$`With which political party are you currently affiliated (6c)` == 5, na.rm = TRUE),
-                                 sum(randomSample2023$`With which political party are you currently affiliated (6c)` == 6, na.rm = TRUE)))
-party.ipf$freq <- party.ipf$freq / sum(party.ipf$freq) * totPop
-party.target <- party.ipf$freq / totPop
-names(party.target) = party.ipf$party.ipf
+randomSample2023[, gender := ifelse(`What is your current gender (3)` == 1, "Female",
+                                    ifelse(`What is your current gender (3)` == 2, "Male",
+                                           ifelse((`What is your current gender (3)` == 3) |
+                                                    (`What is your current gender (3)` == 7) |
+                                                    (`What is your current gender (3)` == 9), "Other", NA)))]
+randomSample2023[, gender := factor(gender, levels = c("Female", "Male", "Other"))]
+
+randomSample2023[, ageCat5 := factor(ageCat5, levels = c("0-29", "30-39",
+                                                         "40-49", "50-59",
+                                                         "60+"))]
+
+randomSample2023[, english := ifelse(`What was the first language you learned (5)` == 1, "English",
+                                     ifelse(`What was the first language you learned (5)` != 1, "Other language", NA))]
+randomSample2023[, english := factor(english, levels = c("English", "Other language"))]
+
+randomSample2023[, foreign := ifelse((`Where do you usually reside (2)` >= 1) &
+                   (`Where do you usually reside (2)` <= 3), "US",
+                 ifelse((`Where do you usually reside (2)` >= 4) &
+                          (`Where do you usually reside (2)` <= 6), "Other country", NA))]
+randomSample2023[, foreign := factor(foreign, levels = c("US", "Other country"))]
+
+randomSample2023[, party := ifelse(`Are you eligible to vote (6a)` == 2, "Not eligible",
+                                   ifelse(`With which political party are you currently affiliated (6c)` == 1, "Democrat",
+                                          ifelse(`With which political party are you currently affiliated (6c)` == 2, "Green",
+                                                 ifelse(`With which political party are you currently affiliated (6c)` == 3, "Libertarian",
+                                                        ifelse(`With which political party are you currently affiliated (6c)` == 4, "Republican",
+                                                               ifelse(`With which political party are you currently affiliated (6c)` == 5, "Other",
+                                                                      ifelse(`With which political party are you currently affiliated (6c)` == 6, "None", NA)))))))]
+randomSample2023[, party := factor(party, levels = c("Not eligible", "Democrat",
+                                                     "Green", "Libertarian", 
+                                                     "Republican", "Other", 
+                                                     "None"))]
+
+randomSampleDesign <- svydesign(~ID, strata = ~`Sampling site`, 
+                                data = randomSample2023,
+                                fpc = ~entryPop)
+
+
+nbburns.target <- prop.table(svytable(~nbburns, randomSampleDesign))
+gender.target <- prop.table(svytable(~gender, randomSampleDesign))
+age.target <- prop.table(svytable(~ageCat5, randomSampleDesign))
+english.target <- prop.table(svytable(~english, randomSampleDesign))
+foreign.target <- prop.table(svytable(~foreign, randomSampleDesign))
+gender.target <- prop.table(svytable(~gender, randomSampleDesign))
+party.target <- prop.table(svytable(~party, randomSampleDesign))
+
 
 
 #Create online survey variables for raking

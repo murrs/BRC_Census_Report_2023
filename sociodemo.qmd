@@ -16,7 +16,12 @@ library(scales)
 library(knitr)
 library(kableExtra)
 library(weights)
+library(cartogram)
+library(sf)
+library(tmap)
+library(tigris)
 library(zipcodeR)
+
 source(paste0(getwd(), "/_RCode/read_census_data.R"))
 source(paste0(getwd(), "/_RCode/make_table_data.R"))
 source(paste0(getwd(), "/_RCode/make_plot_data.R"))
@@ -52,7 +57,7 @@ virgin <- makePlotData(varName = "Was this your first time visiting Black Rock C
 ggplot(virgin[virgin$labels == "Virgin",], aes(x = year, y = est)) +
   geom_line(linewidth = 1.5, color = "#EA008B", alpha = 0.7) +
   geom_point(size = 2.25, color = "#EA008B") +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -253,7 +258,7 @@ ggplot(gender, aes(x = year, y = est, color = labels)) +
   geom_point(size = 2.25) +
   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
   #               linewidth = 1) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022, 2023), labels = c(2013:2019, 2022, 2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
@@ -365,7 +370,7 @@ makeTableData(pronouns) |>
   scroll_box(width = "100%")
 ```
 
-### Personal income in 2022
+### Personal income in 2023
 
 ```{r}
 pi.lt25.23 <- customPlotDat(c("No income", "Less than $7500",
@@ -507,7 +512,7 @@ ggplot(pi.allYears, aes(x = year, y = est, color = labels)) +
   geom_point(size = 2.25) +
   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
   #               linewidth = 1) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), labels = c(2013:2019, 2022:2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
@@ -559,7 +564,7 @@ makeTableData(personalIncome) |>
   scroll_box(width = "100%")
 ```
 
-### Household income in 2022
+### Household income in 2023
 
 ```{r}
 hi.lt25.23 <- customPlotDat(c("No income", "Less than $7500",
@@ -701,7 +706,7 @@ ggplot(hi.allYears, aes(x = year, y = est, color = labels)) +
   geom_point(size = 2.25) +
   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
   #               linewidth = 1) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), labels = c(2013:2019, 2022:2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
@@ -756,41 +761,43 @@ makeTableData(householdIncome) |>
 <!-- need to create 2022 variable for highest level completed to compare to prior years -->
 
 ```{r}
-# education <- makePlotData(varName = "Which level of education have you completed?",
-#                           varNameTable,
-#                           designs = list(design22),
-#                           years = c(2022), 
-#                           levels = c(TRUE),
-#                           labels = c("High school diploma \n or equivalent",
-#                                      "Some college",
-#                                      "Associate's degree",
-#                                      "Bachelor's degree",
-#                                      "Graduate degree (Master's, \n Doctorate, or equivalent)",
-#                                      "Technical/vocational \n certification",
-#                                      "Other",
-#                                      "None of these"),
-#                           labelOrder = c("High school diploma \n or equivalent",
-#                                          "Some college",
-#                                          "Associate's degree",
-#                                          "Bachelor's degree",
-#                                          "Graduate degree (Master's, \n Doctorate, or equivalent)",
-#                                          "Technical/vocational \n certification",
-#                                          "Other",
-#                                          "None of these"))
-# 
-# ggplot(education, aes(x = labels, y = est)) +
-#   geom_bar(stat = "identity", fill = "#EA008B") +
-#   scale_y_continuous(labels = percent) +
-#   labs(x = "Level of education competed", y = "Burning Man participants in 2022 (%)") +
-#   theme_bw() +
-#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-# 
-# makeTableData(education) |>
-#   kbl(col.names = c(2022), row.names = TRUE) |>
-#   kable_paper("striped", full_width = F) |>
-#   kable_styling() |>
-#   column_spec(column = 1:1, width_min = "10.5em") |>
-#   scroll_box(width = "100%")
+education <- makePlotData(varName = "Which level of education have you completed?",
+                          varNameTable,
+                          designs = list(design23),
+                          years = c(2023),
+                          levels = c(TRUE),
+                          labels = c("High school diploma \n or equivalent",
+                                     "Some college",
+                                     "Associate's degree",
+                                     "Bachelor's degree",
+                                     "Graduate degree (Master's, \n Doctorate, or equivalent)",
+                                     "Technical/vocational \n certification",
+                                     "Other",
+                                     "None of these"),
+                          labelOrder = c("High school diploma \n or equivalent",
+                                         "Some college",
+                                         "Associate's degree",
+                                         "Bachelor's degree",
+                                         "Graduate degree (Master's, \n Doctorate, or equivalent)",
+                                         "Technical/vocational \n certification",
+                                         "Other",
+                                         "None of these"))
+
+ggplot(education, aes(x = labels, y = est)) +
+  geom_bar(stat = "identity", fill = "#EA008B") +
+  scale_y_continuous(labels = percent) +
+  labs(x = "Level of education competed", 
+       y = "Burning Man participants in 2023 (%)",
+       title = "Which level of education have you completed?") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+makeTableData(education) |>
+  kbl(col.names = c(2023), row.names = TRUE) |>
+  kable_paper("striped", full_width = F) |>
+  kable_styling() |>
+  column_spec(column = 1:1, width_min = "10.5em") |>
+  scroll_box(width = "100%")
 ```
 
 ## Residence
@@ -812,11 +819,6 @@ makeTableData(householdIncome) |>
 ### Residence outside of Black Rock City
 
 ```{r}
-library(cartogram)
-library(sf)
-library(tmap)
-library(tigris)
-library(zipcodeR)
 
 theZipz <- census23$reside.ZIP
 
@@ -919,7 +921,7 @@ reside <- makePlotData("Where do you usually reside/live (when not in Black Rock
 ggplot(reside, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -999,7 +1001,7 @@ ggplot(numberVotes, aes(x = year, y = est, fill = labels)) +
   geom_bar(stat = "identity", position = "dodge") +
   # geom_line(linewidth = 1.5, alpha = 0.7) +
   # geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -1038,6 +1040,7 @@ politicalParty <- makePlotData("With which political party are you currently aff
                                labelOrder = c("Democratic Party", "Republican Party",
                                               "Libertarian Party", "Green Party",
                                               "Other US Party", "None or unaffiliated"))
+
 
 party.dem.16 <- customPlotDat(c("Democratic"),
                               design = design16, "usparty",
@@ -1111,22 +1114,41 @@ party.oth.13 <- customPlotDat(c("Other", "Am_Indep_Party"),
 party.nne.13 <- customPlotDat(c("None"),
                               design = design13, "usparty",
                               2013, "None or unaffiliated")
-politicalParty <- rbind(politicalParty,
-                        party.dem.16, party.rep.16, party.lib.16,
-                        party.grn.16, party.oth.16, party.nne.16,
-                        party.dem.15, party.rep.15, party.lib.15,
-                        party.grn.15, party.oth.15, party.nne.15,
-                        party.dem.14, party.rep.14, party.lib.14,
-                        party.grn.14, party.oth.14, party.nne.14,
-                        party.dem.13, party.rep.13, party.lib.13,
-                        party.grn.13, party.oth.13, party.nne.13)
+pp16 <- rbind(party.dem.16, party.rep.16, party.lib.16,
+              party.grn.16, party.oth.16, party.nne.16)
+pp16$est <- pp16$est / sum(pp16$est)
+pp16$lower <- pp16$lower / sum(pp16$est)
+pp16$upper <- pp16$upper / sum(pp16$est)
+
+pp15 <- rbind(party.dem.15, party.rep.15, party.lib.15,
+              party.grn.15, party.oth.15, party.nne.15)
+pp15$est <- pp15$est / sum(pp15$est)
+pp15$lower <- pp15$lower / sum(pp15$est)
+pp15$upper <- pp15$upper / sum(pp15$est)
+
+
+pp14 <- rbind(party.dem.14, party.rep.14, party.lib.14,
+              party.grn.14, party.oth.14, party.nne.14)
+pp14$est <- pp14$est / sum(pp14$est)
+pp14$lower <- pp14$lower / sum(pp14$est)
+pp14$upper <- pp14$upper / sum(pp14$est)
+
+pp13 <- rbind(party.dem.13, party.rep.13, party.lib.13,
+              party.grn.13, party.oth.13, party.nne.13)
+pp13$est <- pp13$est / sum(pp13$est)
+pp13$lower <- pp13$lower / sum(pp13$est)
+pp13$upper <- pp13$upper / sum(pp13$est)
+
+
+
+politicalParty <- rbind(politicalParty, pp16, pp15, pp14, pp13)
 
 ggplot(politicalParty, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5) +
   geom_point(size = 2.25, color = "black") +
   # geom_errorbar(aes(ymin = lower, ymax = upper), color = "black", width = 0.2,
   #               linewidth = 1) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -1381,7 +1403,7 @@ language2 <- makePlotData("What was the first language you learned and still use
 
 ggplot(language2, aes(x = year, y = est, fill = labels)) +
   geom_area(alpha = 0.65) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -1425,7 +1447,7 @@ spirituality <- makePlotData("How do you describe your spirituality?",
 ggplot(spirituality, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -1734,7 +1756,7 @@ partner <- makePlotData("In the default world, do you have a partner or partners
 ggplot(partner, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
@@ -1763,7 +1785,7 @@ relationship <- makePlotData("Some people use specific labels to describe their 
                            labels = c("Monogamous",
                                       "Mostly monogamous",
                                       "Polyamorous",
-                                      "Non-concensual non-monogamy",
+                                      "Non-consentual non-monogamy",
                                       "Serial monogamous",
                                       "Polyfidelity",
                                       "Polygamy",
