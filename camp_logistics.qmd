@@ -94,14 +94,14 @@ stayedRV <- makePlotData("Did you stay in an RV or camper-trailer in Black Rock 
 ggplot(stayedRV, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2014:2019, 2022:2023), 
                      labels = c(2014:2019, 2022:2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
   scale_color_manual(values = discreteColors[1:5]) +
   labs(x = "", y = "Burning Man Partcipants (%)", color = "",
-       title = "Did you stay in an RV or camper-trailer in Black Rock City this year, and was it pumped (serviced) on playa?")
+       title = "Did you stay in an RV or camper-trailer in Black Rock City this year, \n and was it pumped (serviced) on playa?")
 
 makeTableData(stayedRV) |>
   kbl(col.names = c(2015:2019, 2022:2023),
@@ -178,14 +178,14 @@ nbfamily <- rbind(nbfamily1, nbfamily2)
 ggplot(nbfamily, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
   scale_color_manual(values = discreteColors[1:5]) +
   labs(x = "", y = "Burning Man Partcipants (%)", color = "",
-       title = "How many of your family members were in Black Rock City this year?")
+       title = "How many of your family members were in \n Black Rock City this year?")
 
 makeTableData(nbfamily) |>
   kbl(col.names = c(2013:2019, 2022:2023),
@@ -222,7 +222,7 @@ ggplot(placed, aes(x = year, y = est, fill = labels)) +
   scale_fill_manual(values = discreteColors[3:1]) +
   labs(x = "", y = "Burning Man participants (%)", 
        fill = "Was your camp assigned \n a location by the \n Placement Team?",
-       title = "Was your camp assigned a location by the Burning Man Placement Team before the event?") +
+       title = "Was your camp assigned a location by the Burning Man Placement Team \n before the event?") +
   theme_bw()
 
 makeTableData(placed) |>
@@ -365,7 +365,7 @@ ticketCost <- makePlotData("Did you pay face value for your ticket?",
 ggplot(ticketCost, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2014:2019, 2022:2023), 
                      labels = c(2014:2019, 2022:2023)) +
@@ -389,7 +389,7 @@ ticketCostChange2 <- data.table(level = ticketCostChange$level,
 
 ggplot(ticketCostChange2, aes(x = level, y = change, fill = direction)) + 
   geom_bar(stat="identity", position="identity", show.legend = FALSE) +
-  theme_bw(13) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         panel.grid.minor = element_blank()) +
   scale_y_continuous(labels = percent, limits = c(-0.025, 0.025)) +
@@ -444,14 +444,15 @@ generate <- makePlotData("How did you generate electricity in your camp?",
 ggplot(generate, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2013:2019, 2022:2023), 
                      labels = c(2013:2019, 2022:2023)) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
   scale_color_manual(values = discreteColors[1:9]) +
   labs(x = "", y = "Burning Man Partcipants (%)", color = "",
-       title = "How did you generate electricity in your camp?")
+       title = "How did you generate electricity in your camp?") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
 
 makeTableData(generate)[9:1,] |>
   kbl(col.names = c(2013:2019, 2022:2023), row.names = TRUE) |>
@@ -492,7 +493,7 @@ vehicleGenfuel <- makePlotData("What was the primary type of fuel you used to ru
 ggplot(vehicleGenfuel, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2016:2019, 2022:2023), 
                      labels = c(2016:2019, 2022:2023)) +
@@ -615,7 +616,7 @@ campGenFuel <- makePlotData("What was the primary type of fuel you used to run y
 ggplot(campGenFuel, aes(x = year, y = est, color = labels)) +
   geom_line(linewidth = 1.5, alpha = 0.7) +
   geom_point(size = 2.25) +
-  theme_bw(13) +
+  theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(2016:2019, 2022:2023), 
                      labels = c(2016:2019, 2022:2023)) +
