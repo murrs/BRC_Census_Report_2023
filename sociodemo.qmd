@@ -802,7 +802,7 @@ makeTableData(education) |>
 
 ## Residence
 
-### Residence inside of Black Rock City
+<!-- ### Residence inside of Black Rock City -->
 
 <!-- I didn't get to this last year.  Some sort of mapping would be great -->
 
@@ -886,16 +886,16 @@ tm_shape(usa2_cont) +
 
 ## table of 
 
-names(statesPercents) <- c(state.name, "District of Columbia", "Puerto Rico")[
-  match(names(statesPercents), c(state.abb, "DC", "PR"),)
-]
-
-head(data.frame(statesPercents),12) |>
-  kbl(col.names = c("Percentage"), row.names = TRUE) |>
-  kable_paper("striped", full_width = F) |>
-  kable_styling() |>
-  column_spec(column = 1:1, width_min = "10.5em") |>
-  scroll_box(width = "100%")
+# names(statesPercents) <- c(state.name, "District of Columbia", "Puerto Rico")[
+#   match(names(statesPercents), c(state.abb, "DC", "PR"),)
+# ]
+# 
+# head(data.frame(statesPercents),12) |>
+#   kbl(col.names = c("Percentage"), row.names = TRUE) |>
+#   kable_paper("striped", full_width = F) |>
+#   kable_styling() |>
+#   column_spec(column = 1:1, width_min = "10.5em") |>
+#   scroll_box(width = "100%")
 
 
 
